@@ -1,0 +1,94 @@
+import dev.s7a.gradle.minecraft.server.tasks.LaunchMinecraftServerTask
+import dev.s7a.gradle.minecraft.server.tasks.LaunchMinecraftServerTask.JarUrl
+
+import java.text.SimpleDateFormat
+
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "dev.s7a.gradle.minecraft.server:plugin:3.0.0"
+  }
+}
+
+plugins {
+    id 'dev.s7a.gradle.minecraft.server' version '3.0.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java'
+}
+
+group = String.format("%s.%s", maven_group, project.name)
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+	maven {
+        name 'papermc'
+        url 'https://repo.papermc.io/repository/maven-public/'
+        content {
+            includeModule("io.papermc.paper", "paper-api")
+            includeModule("io.papermc", "paperlib")
+            includeModule("net.md-5", "bungeecord-chat")
+        }
+    }
+
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+    implementation 'io.papermc:paperlib:1.0.8'
+    testImplementation 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+
+    implementation 'org.incendo:cloud-core:2.0.0-beta.2'
+    implementation 'org.incendo:cloud-paper:2.0.0-beta.2'
+    implementation 'org.incendo:cloud-brigadier:2.0.0-beta.2'
+    implementation 'org.incendo:cloud-processors-requirements:1.0.0-beta.1'
+    implementation 'org.incendo:cloud-annotations:2.0.0-beta.2'
+    
+    implementation group: 'org.assertj', name: 'assertj-core', version: '3.25.1'
+    
+    implementation(project(":common"))
+}
+
+processResources {
+    filesMatching("**/plugin.yml") {
+        expand ( NAME: rootProject.name, VERSION: version, PACKAGE: project.group.toString() )
+    }
+}
+
+
+tasks.register(project.name, LaunchMinecraftServerTask) {
+    dependsOn("build")
+    
+    doFirst {
+        copy {
+            from(layout.buildDirectory.file("libs/${project.name}-${version}.jar"))
+            into(layout.buildDirectory.dir("MinecraftServer/plugins"))
+        }
+    }
+
+	jarUrl.set(new JarUrl().Paper('1.20.4'))
+    agreeEula.set(true)
+
+
+}
+
+
+shadowJar {
+    archiveClassifier.set('')
+    relocate 'io.papermc.lib', 'shadow.io.papermc.paperlib'
+    minimize()
+}
+
+// Disable jar and replace with shadowJar
+jar.enabled = false
+assemble.dependsOn(shadowJar)

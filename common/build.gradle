@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    // Use Maven Central for resolving dependencies.
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.slf4j:slf4j-api:2.0.10'
+    implementation 'org.xerial:sqlite-jdbc:3.40.0.0'
+
+    implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.11'
+    implementation group: 'org.assertj', name: 'assertj-core', version: '3.25.1'
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 17
+}

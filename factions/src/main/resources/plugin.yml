@@ -1,0 +1,8 @@
+main: ${PACKAGE}.${NAME}
+name: ${NAME}
+version: ${VERSION}
+api-version: "1.20"
+author: coolguy1842
+description: Factions Plugin
+commands:
+permissions:
