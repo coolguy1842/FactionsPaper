@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.SenderMapper;
@@ -19,6 +20,7 @@ import com.coolguy1842.factions.Events.Player.OnPlayerJoin;
 import com.coolguy1842.factions.Events.Player.OnPlayerLeave;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.MessageUtil;
+import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factionscommon.FactionsCommon;
 
 public class Factions extends JavaPlugin {
@@ -35,6 +37,10 @@ public class Factions extends JavaPlugin {
         initFactionsCommon(this.getDataFolder().toPath());
         initCommands();
         initEvents();
+
+        for(Player player : this.getServer().getOnlinePlayers()) {
+            PlayerUtil.updatePlayerPermissions(player);
+        }
     }
 
     private void initCommands() {
