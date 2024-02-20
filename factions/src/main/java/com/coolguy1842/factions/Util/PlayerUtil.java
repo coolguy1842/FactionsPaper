@@ -7,13 +7,18 @@ import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
 import org.incendo.cloud.permission.Permission;
 
 import com.coolguy1842.factions.Factions;
+import com.coolguy1842.factions.Util.RankUtil.RankPermission;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
+import com.coolguy1842.factionscommon.Classes.Rank;
+
+import net.kyori.adventure.text.Component;
 
 public class PlayerUtil {
     private static Map<UUID, PermissionAttachment> perms = new HashMap<UUID, PermissionAttachment>();
@@ -33,10 +38,19 @@ public class PlayerUtil {
     }
 
 
-    public static final class Permissions {
-        public static final Permission inFactionPermission = Permission.of("in_faction");
-        public static final Permission notInFactionPermission = Permission.of("not_in_faction");
-        public static final Permission leaderPermission = Permission.of("leader"); 
+    public static final class PlayerPermissions {
+        public static final Permission inFaction = Permission.of("in_faction");
+        public static final Permission notInFaction = Permission.of("not_in_faction");
+        public static final Permission leader = Permission.of("leader");
+        public static final Permission notLeader = Permission.of("not_leader");
+
+        public static Permission rankPermission(RankPermission permission) {
+            return Permission.of("rank_permission_" + permission.name());
+        }
+
+        public static Permission notRankPermission(RankPermission permission) {
+            return Permission.of("not_rank_permission_" + permission.name());
+        }
     }
 
     public static void updatePlayerPermissions(Player player) {
@@ -46,13 +60,42 @@ public class PlayerUtil {
         if(!perms.containsKey(player.getUniqueId())) perms.put(player.getUniqueId(), player.addAttachment(Factions.getPlugin()));
         PermissionAttachment attachment = perms.get(player.getUniqueId());
 
-        attachment.setPermission(Permissions.notInFactionPermission.permissionString(), factionPlayer.getFaction() == null);
-        attachment.setPermission(Permissions.inFactionPermission.permissionString(), factionPlayer.getFaction() != null);
+        attachment.setPermission(PlayerPermissions.notInFaction.permissionString(), factionPlayer.getFaction() == null);
+        attachment.setPermission(PlayerPermissions.inFaction.permissionString(), factionPlayer.getFaction() != null);
 
         if(factionOptional.isPresent()) {
-            attachment.setPermission(Permissions.leaderPermission.permissionString(), factionOptional.get().getLeader().equals(player.getUniqueId()));
+            attachment.setPermission(PlayerPermissions.leader.permissionString(), factionOptional.get().getLeader().equals(player.getUniqueId()));
+            attachment.setPermission(PlayerPermissions.notLeader.permissionString(), !factionOptional.get().getLeader().equals(player.getUniqueId()));
         }
-        else attachment.unsetPermission(Permissions.leaderPermission.permissionString());
+        else {
+            attachment.setPermission(PlayerPermissions.leader.permissionString(), false);
+            attachment.setPermission(PlayerPermissions.notLeader.permissionString(), true);
+        }
+
+
+        Optional<Rank> rankOptional = Factions.getFactionsCommon().rankManager.getRank(factionPlayer.getRank());
+        for(RankPermission rankPermission : RankPermission.values()) {
+            if(factionOptional.isPresent()) {
+                if(factionOptional.get().getLeader().equals(player.getUniqueId())) {
+                    attachment.setPermission(PlayerPermissions.rankPermission(rankPermission).permissionString(), true);
+                    attachment.setPermission(PlayerPermissions.notRankPermission(rankPermission).permissionString(), false);
+                    
+                    continue;
+                }
+            }
+
+            if(!factionOptional.isPresent() || !rankOptional.isPresent()) {
+                attachment.setPermission(PlayerPermissions.rankPermission(rankPermission).permissionString(), false);
+                attachment.setPermission(PlayerPermissions.notRankPermission(rankPermission).permissionString(), true);
+                
+                continue;
+            }
+
+            Boolean hasPermission = rankOptional.get().hasPermission(rankPermission.name());            
+            attachment.setPermission(PlayerPermissions.rankPermission(rankPermission).permissionString(), hasPermission);
+            attachment.setPermission(PlayerPermissions.notRankPermission(rankPermission).permissionString(), !hasPermission);
+        }
+
 
         player.updateCommands();
     }
@@ -62,5 +105,38 @@ public class PlayerUtil {
 
         player.removeAttachment(perms.get(player.getUniqueId()));
         perms.remove(player.getUniqueId());
+    }
+
+
+    public static void acceptInvite(Server server, UUID inviterFaction, UUID invitedID) {
+        Player player = server.getPlayer(invitedID);
+        if(player == null) return;
+
+        Factions.getFactionsCommon().inviteManager.removeInvitesWithInvited(invitedID);
+        Factions.getFactionsCommon().playerManager.setPlayerFaction(invitedID, inviterFaction);
+
+        PlayerUtil.updatePlayerPermissions(player);
+
+        FactionUtil.broadcast(
+            player.getServer(), inviterFaction,
+            MessageUtil.format("{} {} has joined the faction!", Factions.getPrefix(), Component.text(player.getName()))
+        );
+    }
+    
+    public static void rejectInvite(Server server, UUID inviterFaction, UUID invitedID) {
+        Player player = server.getPlayer(invitedID);
+        if(player == null) return;
+
+        Optional<Faction> factionOptional = Factions.getFactionsCommon().factionManager.getFaction(inviterFaction);
+        if(!factionOptional.isPresent()) return;
+
+        Factions.getFactionsCommon().inviteManager.removeInvitesWithInvited(invitedID);
+
+        FactionUtil.broadcast(
+            player.getServer(), inviterFaction,
+            MessageUtil.format("{} {} rejected the invite to the faction!", Factions.getPrefix(), Component.text(player.getName()))
+        );
+
+        player.sendMessage(MessageUtil.format("{} You have rejected the invite to {}!", Factions.getPrefix(), Component.text(factionOptional.get().getName())));
     }
 }

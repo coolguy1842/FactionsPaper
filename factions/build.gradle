@@ -78,8 +78,6 @@ tasks.register(project.name, LaunchMinecraftServerTask) {
 
 	jarUrl.set(new JarUrl().Paper('1.20.4'))
     agreeEula.set(true)
-
-
 }
 
 

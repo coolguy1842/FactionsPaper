@@ -16,8 +16,9 @@ import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
-import com.coolguy1842.factions.Util.PlayerUtil.Permissions;
+import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
 import com.coolguy1842.factions.interfaces.Subcommand;
+import com.coolguy1842.factionscommon.Classes.Invite;
 
 import net.kyori.adventure.text.Component;
 
@@ -55,7 +56,7 @@ public class FactionCreateCommand implements Subcommand {
 
     @Override public String getName() { return "create"; }
     @Override public String getDescription() { return "Creates a faction with the specified name!"; }
-    @Override public Permission getPermission() { return Permissions.notInFactionPermission; }
+    @Override public Permission getPermission() { return PlayerPermissions.notInFaction; }
 
     @Override
     public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
@@ -73,6 +74,13 @@ public class FactionCreateCommand implements Subcommand {
         Player player = (Player)ctx.sender();
 
         UUID factionID = UUID.randomUUID();
+
+        // remove all invites where the player is invited
+        for(Invite invite : Factions.getFactionsCommon().inviteManager.getInvitesWithInvited(player.getUniqueId())) {
+            Factions.getFactionsCommon().inviteManager.removeInvite(invite.getInviter(), invite.getInvited());
+        }
+
+        // create the faction
         Factions.getFactionsCommon().factionManager.addFaction(factionID, factionName, player.getUniqueId());
         Factions.getFactionsCommon().playerManager.setPlayerFaction(player.getUniqueId(), factionID);
 

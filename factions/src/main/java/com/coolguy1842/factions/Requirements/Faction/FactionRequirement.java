@@ -11,9 +11,6 @@ import org.incendo.cloud.processors.requirements.RequirementFailureHandler;
 import org.incendo.cloud.processors.requirements.RequirementPostprocessor;
 import org.incendo.cloud.processors.requirements.Requirements;
 
-import com.coolguy1842.factions.Factions;
-import com.coolguy1842.factions.Util.MessageUtil;
-
 import io.leangen.geantyref.TypeToken;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -22,18 +19,12 @@ public class FactionRequirement {
     public static interface Interface extends Requirement<CommandSender, Interface> {
         Map<String, Component> getErrorMessages();
         @NonNull Component errorMessage(final @NonNull CommandContext<CommandSender> ctx);
-    }
+    }   
 
     public static final class ErrorHandler implements RequirementFailureHandler<CommandSender, Interface> {
         @Override
         public void handleFailure(final @NonNull CommandContext<CommandSender> ctx, final Interface requirement) {
-            ctx.sender().sendMessage(
-                MessageUtil.format(
-                    Component.text("{} {}"),
-                    Factions.getPrefix(),
-                    requirement.errorMessage(ctx).color(TextColor.color(191, 63, 54))
-                )
-            );
+            ctx.sender().sendMessage(requirement.errorMessage(ctx).color(TextColor.color(251, 84, 84)));
         }
     }
 

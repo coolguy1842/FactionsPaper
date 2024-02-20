@@ -1,4 +1,4 @@
-package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Leader;
+package com.coolguy1842.factions.SubCommands.Faction.NoFaction;
 
 import java.util.Map;
 
@@ -10,16 +10,16 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.processors.requirements.Requirements;
 
+import com.coolguy1842.factions.Parsers.FactionParser;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
-import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
 import com.coolguy1842.factions.interfaces.Subcommand;
-import com.coolguy1842.factionscommon.Classes.FactionPlayer;
+import com.coolguy1842.factionscommon.Classes.Faction;
 
 import net.kyori.adventure.text.Component;
 
-public class FactionDisbandCommand implements Subcommand {    
+public class FactionRejectCommand implements Subcommand {    
     private final class Requirement implements FactionRequirement.Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
@@ -43,16 +43,15 @@ public class FactionDisbandCommand implements Subcommand {
         }
     }
 
-    @Override public String getName() { return "disband"; }
-    @Override public String getDescription() { return "Disbands the faction you are in!"; }
-    @Override public Permission getPermission() {
-        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.leader);
-    }
+    @Override public String getName() { return "reject"; }
+    @Override public String getDescription() { return "Rejects an invite from the specified faction"; }
+    @Override public Permission getPermission() { return PlayerPermissions.notInFaction; }
 
     @Override
     public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
         return
             baseCommand.literal(getName())
+                .required("faction", FactionParser.invitingFaction())
                 .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
                 .permission(getPermission())
                 .handler(ctx -> runCommand(ctx));
@@ -61,8 +60,8 @@ public class FactionDisbandCommand implements Subcommand {
     @Override
     public void runCommand(CommandContext<CommandSender> ctx) {
         Player player = (Player)ctx.sender();
-        FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+        final Faction faction = ctx.get("faction");
 
-        FactionUtil.disbandFaction(player.getServer(), factionPlayer.getFaction());
+        PlayerUtil.rejectInvite(player.getServer(), faction.getID(), player.getUniqueId());
     }
 }

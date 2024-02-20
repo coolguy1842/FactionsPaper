@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
+import com.coolguy1842.factionscommon.Classes.Invite;
 
 import net.kyori.adventure.text.Component;
 
@@ -20,7 +21,13 @@ public class FactionUtil {
         Faction faction = factionOptional.get();
         String factionName = faction.getName();
 
-        for(FactionPlayer fP : Factions.getFactionsCommon().playerManager.getPlayersWithFaction(faction.getID())) {
+        // remove all invites from this faction
+        for(Invite invite : Factions.getFactionsCommon().inviteManager.getInvitesWithInviter(factionID)) {
+            Factions.getFactionsCommon().inviteManager.removeInvite(invite.getInviter(), invite.getInvited());
+        }
+
+        // kick all players from the faction
+        for(FactionPlayer fP : Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionID)) {
             Player p = server.getPlayer(fP.getID());
             Factions.getFactionsCommon().playerManager.setPlayerFaction(fP.getID(), null);
             
@@ -38,5 +45,15 @@ public class FactionUtil {
                 Component.text(factionName)
             )
         );
+    }
+
+    public static void broadcast(Server server, UUID factionID, Component message) {
+        for(FactionPlayer factionPlayer : Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionID)) {
+            Player player = server.getPlayer(factionPlayer.getID());
+            
+            if(player != null && player.isOnline()) {        
+                player.sendMessage(message);
+            }
+        }
     }
 }

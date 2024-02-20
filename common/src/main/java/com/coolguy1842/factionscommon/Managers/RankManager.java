@@ -85,7 +85,7 @@ public class RankManager {
     }
 
     public Optional<Rank> getRank(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("RankManager#getRank failed: id == null");
+        if(id == null) return Optional.empty();
         if(ranks.containsKey(id)) return Optional.of(ranks.get(id));
 
         Optional<Rank> rank = database.getRank(id);
