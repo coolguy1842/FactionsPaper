@@ -1,5 +1,6 @@
 package com.coolguy1842.factions.SubCommands.Faction.NoFaction;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -59,13 +60,14 @@ public class FactionCreateCommand implements Subcommand {
     @Override public Permission getPermission() { return PlayerPermissions.notInFaction; }
 
     @Override
-    public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
-        return
+    public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
+        return List.of(
             baseCommand.literal(getName())
                 .required("faction", StringParser.greedyStringParser())
                 .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
                 .permission(getPermission())
-                .handler(ctx -> runCommand(ctx));
+                .handler(ctx -> runCommand(ctx))
+        );
     }
 
     @Override

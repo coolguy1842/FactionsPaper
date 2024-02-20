@@ -1,27 +1,26 @@
-package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Leader;
+package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Rank.RankSubcommands;
 
-import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.incendo.cloud.Command.Builder;
 import org.incendo.cloud.context.CommandContext;
-import org.incendo.cloud.permission.Permission;
-import org.incendo.cloud.processors.requirements.Requirements;
 
+import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.FactionUtil;
+import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
-import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
-import com.coolguy1842.factions.interfaces.Subcommand;
+import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
+import com.coolguy1842.factionscommon.Classes.Rank;
 
 import net.kyori.adventure.text.Component;
 
-public class FactionDisbandCommand implements Subcommand {    
-    private final class Requirement implements FactionRequirement.Interface {
+public class FactionRankRemoveCommand {
+    public static final class Requirement implements FactionRequirement.Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
                 Map.entry("notPlayer", Component.text("Only players can use this!")),
@@ -44,27 +43,26 @@ public class FactionDisbandCommand implements Subcommand {
         }
     }
 
-    @Override public String getName() { return "disband"; }
-    @Override public String getDescription() { return "Disbands the faction you are in!"; }
-    @Override public Permission getPermission() {
-        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.leader);
-    }
-
-    @Override
-    public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
-        return List.of(
-            baseCommand.literal(getName())
-                .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
-                .permission(getPermission())
-                .handler(ctx -> runCommand(ctx))
-        );
-    }
-
-    @Override
-    public void runCommand(CommandContext<CommandSender> ctx) {
+    public static void runCommand(CommandContext<CommandSender> ctx) {
         Player player = (Player)ctx.sender();
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+        Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
 
-        FactionUtil.disbandFaction(player.getServer(), factionPlayer.getFaction());
+        Rank rank = ctx.get("name");
+        FactionUtil.broadcast(
+            player.getServer(), faction.getID(),
+            MessageUtil.format("{} {} has removed the rank named {}.", Factions.getPrefix(), player.displayName(), Component.text(rank.getName()))
+        );
+
+        for(FactionPlayer fP : Factions.getFactionsCommon().playerManager.getPlayersWithRank(rank.getID())) {
+            Factions.getFactionsCommon().playerManager.setPlayerRank(fP.getID(), null);
+
+            Player p = Bukkit.getPlayer(fP.getID());
+            if(p == null || !p.isOnline()) continue;
+            
+            PlayerUtil.updatePlayerPermissions(p);
+        }
+
+        Factions.getFactionsCommon().rankManager.removeRank(rank.getID());
     }
 }

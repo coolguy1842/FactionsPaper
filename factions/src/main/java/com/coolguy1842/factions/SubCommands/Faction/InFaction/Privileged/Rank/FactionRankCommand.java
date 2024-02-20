@@ -1,4 +1,4 @@
-package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Leader;
+package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Rank;
 
 import java.util.List;
 import java.util.Map;
@@ -8,19 +8,21 @@ import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command.Builder;
 import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.parser.standard.StringParser;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.processors.requirements.Requirements;
 
+import com.coolguy1842.factions.Parsers.RankParser;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
-import com.coolguy1842.factions.Util.FactionUtil;
-import com.coolguy1842.factions.Util.PlayerUtil;
+import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Rank.RankSubcommands.FactionRankCreateCommand;
+import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Rank.RankSubcommands.FactionRankRemoveCommand;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
+import com.coolguy1842.factions.Util.RankUtil.RankPermission;
 import com.coolguy1842.factions.interfaces.Subcommand;
-import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 
 import net.kyori.adventure.text.Component;
 
-public class FactionDisbandCommand implements Subcommand {    
+public class FactionRankCommand implements Subcommand {    
     private final class Requirement implements FactionRequirement.Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
@@ -44,10 +46,10 @@ public class FactionDisbandCommand implements Subcommand {
         }
     }
 
-    @Override public String getName() { return "disband"; }
-    @Override public String getDescription() { return "Disbands the faction you are in!"; }
+    @Override public String getName() { return "rank"; }
+    @Override public String getDescription() { return "Base command for ranks."; }
     @Override public Permission getPermission() {
-        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.leader);
+        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.rankPermission(RankPermission.ADMIN));
     }
 
     @Override
@@ -56,15 +58,19 @@ public class FactionDisbandCommand implements Subcommand {
             baseCommand.literal(getName())
                 .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
                 .permission(getPermission())
-                .handler(ctx -> runCommand(ctx))
+                .literal("create")
+                    .required("name", StringParser.stringParser())
+                        .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new FactionRankCreateCommand.Requirement()))
+                        .handler(ctx -> FactionRankCreateCommand.runCommand(ctx)),
+            baseCommand.literal(getName())
+                .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
+                .permission(getPermission())
+                .literal("remove")
+                    .required("name", RankParser.rankParser())
+                        .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new FactionRankRemoveCommand.Requirement()))
+                        .handler(ctx -> FactionRankRemoveCommand.runCommand(ctx))
         );
     }
 
-    @Override
-    public void runCommand(CommandContext<CommandSender> ctx) {
-        Player player = (Player)ctx.sender();
-        FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
-
-        FactionUtil.disbandFaction(player.getServer(), factionPlayer.getFaction());
-    }
+    @Override public void runCommand(CommandContext<CommandSender> ctx) {}
 }

@@ -46,6 +46,15 @@ public class ParserCaptions {
             public static final String NO_INVITE_KEY = "argument.parse.failure.faction.no.invite";
             public static final Caption NO_INVITE = Caption.of(NO_INVITE_KEY);
         }
+
+        public static final class Rank {
+            public static final String INVALID_KEY = "argument.parse.failure.rank.invalid";
+            public static final Caption INVALID = Caption.of(INVALID_KEY);
+            
+            public static final String NO_FACTION_KEY = "argument.parse.failure.rank.no.faction";
+            public static final Caption NO_FACTION = Caption.of(NO_FACTION_KEY);
+
+        }
     }
 
     public static final class Providers {
@@ -76,6 +85,15 @@ public class ParserCaptions {
                     case ParserCaptions.Keys.Faction.NOT_OWN_KEY: return (CommandSender sender) -> { return "You can't specify your own faction"; };
                     case ParserCaptions.Keys.Faction.NO_INVITE_KEY: return (CommandSender sender) -> { return "You don't have an invite from <input>"; };
                     default: return (CommandSender sender) -> { return "No faction named <input>"; };
+                }
+            }
+        }
+    
+        public static final class Rank {
+            public static final Function<CommandSender, String> getProvider(Caption caption) {
+                switch(caption.key()) {
+                    case ParserCaptions.Keys.Rank.NO_FACTION_KEY: return (CommandSender sender) -> { return "You must be in a faction"; };
+                    default: return (CommandSender sender) -> { return "No rank named <input>"; };
                 }
             }
         }

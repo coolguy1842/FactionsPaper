@@ -23,6 +23,7 @@ import com.coolguy1842.factions.Events.Player.OnPlayerLeave;
 import com.coolguy1842.factions.Parsers.FactionParser;
 import com.coolguy1842.factions.Parsers.FactionPlayerParser;
 import com.coolguy1842.factions.Parsers.ParserCaptions;
+import com.coolguy1842.factions.Parsers.RankParser;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
@@ -89,7 +90,11 @@ public class Factions extends JavaPlugin {
         
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.INVALID, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.INVALID)))
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.NO_INVITE, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.NO_INVITE)))
-            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.NOT_OWN, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.NOT_OWN)));
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.NOT_OWN, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.NOT_OWN)))
+
+
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.INVALID, ParserCaptions.Providers.Rank.getProvider(ParserCaptions.Keys.Rank.INVALID)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.NO_FACTION, ParserCaptions.Providers.Rank.getProvider(ParserCaptions.Keys.Rank.NO_FACTION)));
     }
 
     private void registerParsers() {
@@ -101,7 +106,9 @@ public class Factions extends JavaPlugin {
             
             .registerParser(FactionParser.anyFaction())
             .registerParser(FactionParser.invitingFaction())
-            .registerParser(FactionParser.notOwnFaction());
+            .registerParser(FactionParser.notOwnFaction())
+            
+            .registerParser(RankParser.rankParser());
     }
 
 

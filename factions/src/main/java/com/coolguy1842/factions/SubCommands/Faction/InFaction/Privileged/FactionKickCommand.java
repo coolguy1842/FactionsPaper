@@ -1,5 +1,6 @@
 package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -57,13 +58,14 @@ public class FactionKickCommand implements Subcommand {
     }
 
     @Override
-    public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
-        return
+    public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
+        return List.of(
             baseCommand.literal(getName())
                 .required("player", FactionPlayerParser.inSameFactionNotLeader(true))
                     .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
                     .permission(getPermission())
-                    .handler(ctx -> runCommand(ctx));
+                    .handler(ctx -> runCommand(ctx))
+        );
     }
 
     @Override

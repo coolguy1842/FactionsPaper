@@ -1,5 +1,6 @@
 package com.coolguy1842.factions.SubCommands.Faction.All;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.command.CommandSender;
@@ -33,11 +34,12 @@ public class FactionsHelpCommand implements Subcommand {
     @Override public Permission getPermission() { return null; }
 
     @Override
-    public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
-        return
+    public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
+        return List.of(
             baseCommand.literal(getName())
-            .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
-            .handler(ctx -> runCommand(ctx));
+                .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
+                .handler(ctx -> runCommand(ctx))
+        );
     }
 
     @Override
