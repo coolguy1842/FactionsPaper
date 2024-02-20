@@ -3,6 +3,7 @@ package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -22,13 +23,10 @@ import com.coolguy1842.factions.Util.RankUtil.RankPermission;
 import com.coolguy1842.factions.interfaces.Subcommand;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
-import com.coolguy1842.factionscommon.Classes.Invite.InviteType;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
 
-public class FactionInviteCommand implements Subcommand {    
+public class FactionKickCommand implements Subcommand {    
     private final class Requirement implements FactionRequirement.Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
@@ -52,17 +50,17 @@ public class FactionInviteCommand implements Subcommand {
         }
     }
 
-    @Override public String getName() { return "invite"; }
-    @Override public String getDescription() { return "Invites the specified player to the faction!"; }
+    @Override public String getName() { return "kick"; }
+    @Override public String getDescription() { return "Kicks the specified player from the faction!"; }
     @Override public Permission getPermission() {
-        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.rankPermission(RankPermission.INVITE));
+        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.rankPermission(RankPermission.KICK));
     }
 
     @Override
     public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
         return
             baseCommand.literal(getName())
-                .required("player", FactionPlayerParser.notInFactionHasNoInvite())
+                .required("player", FactionPlayerParser.inSameFactionNotLeader(true))
                     .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
                     .permission(getPermission())
                     .handler(ctx -> runCommand(ctx));
@@ -74,28 +72,19 @@ public class FactionInviteCommand implements Subcommand {
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
         Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
 
-        FactionPlayer invited = ctx.get("player");
-        Player invitedPlayer = Bukkit.getPlayer(invited.getID());
+        FactionPlayer kicked = ctx.get("player");
+        OfflinePlayer kickedPlayer = Bukkit.getOfflinePlayer(kicked.getID());
 
-        Factions.getFactionsCommon().inviteManager.addInvite(faction.getID(), invited.getID(), InviteType.FACTION);
+        Factions.getFactionsCommon().playerManager.setPlayerFaction(kicked.getID(), null);
 
         FactionUtil.broadcast(
             ctx.sender().getServer(), factionPlayer.getFaction(),
-            MessageUtil.format("{} {} has invited {} to the faction!", Factions.getPrefix(), player.displayName(), invitedPlayer.displayName())
+            MessageUtil.format("{} {} kicked {} from the faction!", Factions.getPrefix(), Component.text(player.getName()), Component.text(kickedPlayer.getName()))
         );
 
-        invitedPlayer.sendMessage(
-            MessageUtil.format(
-                "{} You have been invited to {}!\n{}",
-                Factions.getPrefix(), Component.text(faction.getName()),
-                MessageUtil.getAcceptDeny(
-                    ClickEvent.runCommand("/f accept " + faction.getName()),
-                    HoverEvent.showText(MessageUtil.format("Accept invite from {}?", Component.text(faction.getName()))),
+        if(!kickedPlayer.isOnline()) return;
 
-                    ClickEvent.runCommand("/f reject " + faction.getName()),
-                    HoverEvent.showText(MessageUtil.format("Reject invite from {}?", Component.text(faction.getName())))
-                )
-            )
-        );
+        PlayerUtil.updatePlayerPermissions(kickedPlayer.getPlayer());
+        kickedPlayer.getPlayer().sendMessage(MessageUtil.format("{} You have been kicked from {}.", Factions.getPrefix(), Component.text(faction.getName())));
     }
 }

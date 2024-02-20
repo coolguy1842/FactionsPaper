@@ -23,11 +23,17 @@ public class ParserCaptions {
             public static final String NOT_IN_FACTION_KEY = "argument.parse.failure.faction.player.not.in.faction";
             public static final Caption NOT_IN_FACTION = Caption.of(NOT_IN_FACTION_KEY);
             
+            public static final String NOT_IN_SAME_FACTION_KEY = "argument.parse.failure.faction.player.not.in.same.faction";
+            public static final Caption NOT_IN_SAME_FACTION = Caption.of(NOT_IN_FACTION_KEY);
+            
             public static final String HAS_INVITE_KEY = "argument.parse.failure.faction.player.has.invite";
             public static final Caption HAS_INVITE = Caption.of(HAS_INVITE_KEY);
             
             public static final String HAS_NO_INVITE_KEY = "argument.parse.failure.faction.player.has.no.invite";
             public static final Caption HAS_NO_INVITE = Caption.of(HAS_NO_INVITE_KEY);
+            
+            public static final String BAD_PLAYER_KEY = "argument.parse.failure.faction.player.bad.player";
+            public static final Caption BAD_PLAYER = Caption.of(BAD_PLAYER_KEY);
         }
 
         public static final class Faction {
@@ -55,8 +61,10 @@ public class ParserCaptions {
                     case ParserCaptions.Keys.FactionPlayer.SELF_KEY: return (CommandSender sender) -> { return "You cannot do that to yourself"; };
                     case ParserCaptions.Keys.FactionPlayer.IN_FACTION_KEY: return (CommandSender sender) -> { return "<input> is in a faction"; };
                     case ParserCaptions.Keys.FactionPlayer.NOT_IN_FACTION_KEY: return (CommandSender sender) -> { return "<input> is not in a faction"; };
+                    case ParserCaptions.Keys.FactionPlayer.NOT_IN_SAME_FACTION_KEY: return (CommandSender sender) -> { return "<input> is not in your faction"; };
                     case ParserCaptions.Keys.FactionPlayer.HAS_INVITE_KEY: return (CommandSender sender) -> { return "<input> already has an invite"; };
                     case ParserCaptions.Keys.FactionPlayer.HAS_NO_INVITE_KEY: return (CommandSender sender) -> { return "You don't have an invite from <input>"; };
+                    case ParserCaptions.Keys.FactionPlayer.BAD_PLAYER_KEY: return (CommandSender sender) -> { return "You cannot do that to <input>"; };
                     default: return (CommandSender sender) -> { return "No player found named <input>"; };
                 }
             }

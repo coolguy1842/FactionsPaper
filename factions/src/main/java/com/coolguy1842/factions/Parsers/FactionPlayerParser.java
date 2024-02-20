@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.caption.Caption;
@@ -20,15 +21,19 @@ import org.incendo.cloud.suggestion.Suggestion;
 
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Util.PlayerUtil;
+import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 
-public class FactionPlayerParser<C> implements ArgumentParser<C, Player>, BlockingSuggestionProvider<C> {
+public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>, BlockingSuggestionProvider<C> {
     public static enum ParserType {
         INCLUDES_SELF,
         IN_FACTION,
+        IN_SAME_FACTION,
         NOT_IN_FACTION,
         HAS_INVITE,
-        HAS_NO_INVITE
+        HAS_NO_INVITE,
+        NOT_LEADER,
+        INCLUDES_OFFLINE
     }
 
     private List<ParserType> _types;
@@ -40,17 +45,18 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, Player>, Blocki
     }
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull Player> parse(@NonNull CommandContext<C> ctx, @NonNull CommandInput cmdInput) {
+    public @NonNull ArgumentParseResult<@NonNull FactionPlayer> parse(@NonNull CommandContext<C> ctx, @NonNull CommandInput cmdInput) {
         if(!(ctx.sender() instanceof Player)) {
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.NOT_PLAYER, "", ctx));
         }
 
         Player sender = (Player)ctx.sender();
+        FactionPlayer senderFactionPlayer = PlayerUtil.getFactionPlayer(sender.getUniqueId());
         
         String input = cmdInput.readString();
-        Player player = Bukkit.getPlayerExact(input);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(input);
         
-        if(player == null || !player.isOnline() || !sender.canSee(player)) {
+        if(player == null || (!_types.contains(ParserType.INCLUDES_OFFLINE) && !player.isOnline())) {
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.INVALID, input, ctx));
         }
 
@@ -58,16 +64,23 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, Player>, Blocki
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.SELF, input, ctx));
         }
         
-        Boolean inFaction = PlayerUtil.getFactionPlayer(player.getUniqueId()).getFaction() != null;
+
+        FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+        Boolean inFaction = factionPlayer.getFaction() != null;
         if(_types.contains(ParserType.IN_FACTION) && !inFaction) {
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.NOT_IN_FACTION, input, ctx));
         }
+
+        if(_types.contains(ParserType.IN_SAME_FACTION) && (!inFaction || !factionPlayer.getFaction().equals(senderFactionPlayer.getFaction()))) {
+            return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.NOT_IN_SAME_FACTION, input, ctx));
+        }
+
 
         if(_types.contains(ParserType.NOT_IN_FACTION) && inFaction) {
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.IN_FACTION, input, ctx));
         }
         
-        FactionPlayer senderFactionPlayer = PlayerUtil.getFactionPlayer(sender.getUniqueId());
+
         Boolean hasInvite = Factions.getFactionsCommon().inviteManager.getInvite(senderFactionPlayer.getFaction(), player.getUniqueId()).isPresent();
         if(_types.contains(ParserType.HAS_INVITE) && !hasInvite) {
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.HAS_NO_INVITE, input, ctx));
@@ -77,7 +90,16 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, Player>, Blocki
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.HAS_INVITE, input, ctx));
         }
 
-        return ArgumentParseResult.success(player);
+
+        if(_types.contains(ParserType.NOT_LEADER) && inFaction) {
+            Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
+            if(faction.getLeader().equals(player.getUniqueId())) {
+                return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.BAD_PLAYER, input, ctx));
+            }
+        }
+
+
+        return ArgumentParseResult.success(factionPlayer);
     }
 
     @Override
@@ -92,17 +114,41 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, Player>, Blocki
         Player sender = (Player)ctx.sender();
         FactionPlayer senderFactionPlayer = PlayerUtil.getFactionPlayer(sender.getUniqueId());
 
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            if(!_types.contains(ParserType.INCLUDES_SELF) && player.getUniqueId().equals(sender.getUniqueId())) continue;
-            if(!sender.canSee(player)) continue;
+        List<OfflinePlayer> players = new ArrayList<>(
+            Bukkit.getOnlinePlayers()
+                .stream()
+                .map(x -> Bukkit.getOfflinePlayer(x.getUniqueId()))
+                .toList()
+        );
 
-            Boolean inFaction = PlayerUtil.getFactionPlayer(player.getUniqueId()).getFaction() != null;
+        if(_types.contains(ParserType.INCLUDES_OFFLINE)) {
+            for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+                if(players.contains(offlinePlayer)) continue;
+
+                if(PlayerUtil.getFactionPlayer(offlinePlayer.getUniqueId()).getFaction() == null) continue;
+                players.add(offlinePlayer);
+            }
+        }
+
+        for(OfflinePlayer player : players) {
+            if(!_types.contains(ParserType.INCLUDES_SELF) && player.getUniqueId().equals(sender.getUniqueId())) continue;
+
+            FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+            Boolean inFaction = factionPlayer.getFaction() != null;
+
             if(_types.contains(ParserType.IN_FACTION) && !inFaction) continue;
+            if(_types.contains(ParserType.IN_SAME_FACTION) && (!inFaction || !factionPlayer.getFaction().equals(senderFactionPlayer.getFaction()))) continue;
+
             if(_types.contains(ParserType.NOT_IN_FACTION) && inFaction) continue;
             
             Boolean hasInvite = Factions.getFactionsCommon().inviteManager.getInvite(senderFactionPlayer.getFaction(), player.getUniqueId()).isPresent();
             if(_types.contains(ParserType.HAS_INVITE) && !hasInvite) continue;
             if(_types.contains(ParserType.HAS_NO_INVITE) && hasInvite) continue;
+
+            if(_types.contains(ParserType.NOT_LEADER) && inFaction) {
+                Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
+                if(faction.getLeader().equals(player.getUniqueId())) continue;
+            }
 
             out.add(Suggestion.simple(player.getName()));
         }
@@ -111,21 +157,32 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, Player>, Blocki
     }
 
 
-    public static<C> @NonNull ParserDescriptor<C, Player> notInFaction() {
-        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION), Player.class);
+    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> notInFaction() {
+        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION), FactionPlayer.class);
     }
 
-    public static<C> @NonNull ParserDescriptor<C, Player> notInFactionHasNoInvite() {
-        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION, ParserType.HAS_NO_INVITE), Player.class);
+    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> notInFactionHasNoInvite() {
+        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION, ParserType.HAS_NO_INVITE), FactionPlayer.class);
     }
 
-    public static<C> @NonNull ParserDescriptor<C, Player> notInFactionHasInvite() {
-        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION, ParserType.HAS_INVITE), Player.class);
+    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> notInFactionHasInvite() {
+        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION, ParserType.HAS_INVITE), FactionPlayer.class);
     }
 
     
-    public static<C> @NonNull ParserDescriptor<C, Player> inFaction() {
-        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_FACTION), Player.class);
+    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> inFaction() {
+        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_FACTION), FactionPlayer.class);
+    }
+    
+    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> inSameFaction(Boolean hasOffline) {
+        if(hasOffline) return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_SAME_FACTION, ParserType.INCLUDES_OFFLINE), FactionPlayer.class);
+        else return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_SAME_FACTION), FactionPlayer.class);
+        
+    }
+    
+    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> inSameFactionNotLeader(Boolean hasOffline) {
+        if(hasOffline) return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_SAME_FACTION, ParserType.NOT_LEADER, ParserType.INCLUDES_OFFLINE), FactionPlayer.class);
+        else return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_SAME_FACTION, ParserType.NOT_LEADER), FactionPlayer.class);
     }
     
 

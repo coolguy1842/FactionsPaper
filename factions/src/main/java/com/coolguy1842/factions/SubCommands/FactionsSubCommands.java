@@ -8,6 +8,7 @@ import com.coolguy1842.factions.SubCommands.Faction.NoFaction.FactionCreateComma
 import com.coolguy1842.factions.SubCommands.Faction.NoFaction.FactionRejectCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionLeaveCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.FactionInviteCommand;
+import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.FactionKickCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Leader.FactionDisbandCommand;
 import com.coolguy1842.factions.interfaces.Subcommand;
 
@@ -19,7 +20,8 @@ public class FactionsSubCommands {
         INVITE,
         ACCEPT,
         REJECT,
-        LEAVE
+        LEAVE,
+        KICK
     }
 
     public static final List<Subcommand> subcommands = List.of(
@@ -29,6 +31,7 @@ public class FactionsSubCommands {
         new FactionInviteCommand (),
         new FactionAcceptCommand (),
         new FactionRejectCommand (),
-        new FactionLeaveCommand  ()
+        new FactionLeaveCommand  (),
+        new FactionKickCommand   ()
     );
 }

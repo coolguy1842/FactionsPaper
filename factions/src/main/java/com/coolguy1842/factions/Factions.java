@@ -17,6 +17,7 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 
 import com.coolguy1842.factions.Commands.FactionCommand;
+import com.coolguy1842.factions.Events.Player.OnPlayerChat;
 import com.coolguy1842.factions.Events.Player.OnPlayerJoin;
 import com.coolguy1842.factions.Events.Player.OnPlayerLeave;
 import com.coolguy1842.factions.Parsers.FactionParser;
@@ -69,22 +70,26 @@ public class Factions extends JavaPlugin {
     }
 
     private void registerCaptions() {        
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.NOT_PLAYER, ParserCaptions.Providers.getProvider(ParserCaptions.Keys.NOT_PLAYER)));
+        commandManager.captionRegistry()
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.NOT_PLAYER, ParserCaptions.Providers.getProvider(ParserCaptions.Keys.NOT_PLAYER)))
 
 
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.INVALID, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.INVALID)));
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.SELF, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.SELF)));
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.INVALID, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.INVALID)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.SELF, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.SELF)))
         
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.NOT_IN_FACTION, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.NOT_IN_FACTION)));
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.IN_FACTION, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.IN_FACTION)));
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.NOT_IN_FACTION, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.NOT_IN_FACTION)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.NOT_IN_SAME_FACTION, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.NOT_IN_SAME_FACTION)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.IN_FACTION, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.IN_FACTION)))
 
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.HAS_INVITE, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.HAS_INVITE)));
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.HAS_NO_INVITE, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.HAS_NO_INVITE)));
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.HAS_INVITE, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.HAS_INVITE)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.HAS_NO_INVITE, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.HAS_NO_INVITE)))
+
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.BAD_PLAYER, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.BAD_PLAYER)))
 
         
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.INVALID, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.INVALID)));
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.NO_INVITE, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.NO_INVITE)));
-        commandManager.captionRegistry().registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.NOT_OWN, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.NOT_OWN)));
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.INVALID, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.INVALID)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.NO_INVITE, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.NO_INVITE)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.NOT_OWN, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.NOT_OWN)));
     }
 
     private void registerParsers() {
@@ -103,6 +108,7 @@ public class Factions extends JavaPlugin {
     private void initEvents() {
         this.getServer().getPluginManager().registerEvents(new OnPlayerJoin(), this);
         this.getServer().getPluginManager().registerEvents(new OnPlayerLeave(), this);
+        this.getServer().getPluginManager().registerEvents(new OnPlayerChat(), this);
     }
 
 
