@@ -42,11 +42,7 @@ public class RankManager {
     public RankManager(Path configPath) {
         database = new RankDatabase(configPath);
 
-        ranks = new HashMap<>();
-        ranksByFactionAndName = new HashMap<>();
-        ranksList = new ArrayList<>();
-
-        loadRanks();
+        reload();
     }
 
     private void loadRanks() {
@@ -145,6 +141,14 @@ public class RankManager {
         ranks.get(id).setPermissions(permissions);
     }
 
+
+    public void reload() {
+        ranks = new HashMap<>();
+        ranksByFactionAndName = new HashMap<>();
+        ranksList = new ArrayList<>();
+
+        loadRanks();
+    }
 
     public void close() {
         database.close();

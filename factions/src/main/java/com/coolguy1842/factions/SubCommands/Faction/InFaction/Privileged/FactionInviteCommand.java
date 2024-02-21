@@ -1,12 +1,10 @@
 package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged;
 
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command.Builder;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.permission.Permission;
@@ -14,45 +12,24 @@ import org.incendo.cloud.processors.requirements.Requirements;
 
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Parsers.FactionPlayerParser;
+import com.coolguy1842.factions.Parsers.FactionPlayerParser.ParserType;
+import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
-import com.coolguy1842.factions.Util.RankUtil.RankPermission;
 import com.coolguy1842.factions.interfaces.Subcommand;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 import com.coolguy1842.factionscommon.Classes.Invite.InviteType;
+import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 
 public class FactionInviteCommand implements Subcommand {    
-    private final class Requirement implements FactionRequirement.Interface {
-        public Map<String, Component> getErrorMessages() {
-            return Map.ofEntries(
-                Map.entry("notPlayer", Component.text("Only players can use this!")),
-                Map.entry("error", Component.text("Error"))
-            );
-        }
-
-        @Override
-        public @NonNull Component errorMessage(final @NonNull CommandContext<CommandSender> ctx) {
-            if(!(ctx.sender() instanceof Player)) {
-                return getErrorMessages().get("notPlayer");
-            }
-
-            return getErrorMessages().get("error");
-        }
-
-        @Override
-        public boolean evaluateRequirement(final @NonNull CommandContext<CommandSender> ctx) {
-            return ctx.sender() instanceof Player;
-        }
-    }
-
     @Override public String getName() { return "invite"; }
     @Override public String getDescription() { return "Invites the specified player to the faction!"; }
     @Override public Permission getPermission() {
@@ -63,8 +40,8 @@ public class FactionInviteCommand implements Subcommand {
     public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
         return List.of(
             baseCommand.literal(getName())
-                .required("player", FactionPlayerParser.notInFactionHasNoInvite())
-                    .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
+                .required("player", FactionPlayerParser.withOptions(ParserType.NOT_IN_FACTION, ParserType.HAS_NO_INVITE))
+                    .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
                     .permission(getPermission())
                     .handler(ctx -> runCommand(ctx))
         );

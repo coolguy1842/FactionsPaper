@@ -6,7 +6,10 @@ import java.util.UUID;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.incendo.cloud.Command.Builder;
 import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.parser.standard.StringParser;
+import org.incendo.cloud.processors.requirements.Requirements;
 
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
@@ -18,7 +21,7 @@ import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 
 import net.kyori.adventure.text.Component;
 
-public class FactionRankCreateCommand {
+public class FactionRankCreateCommand implements RankSubcommand {
     public static final class Requirement implements FactionRequirement.Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
@@ -59,8 +62,18 @@ public class FactionRankCreateCommand {
             return !Factions.getFactionsCommon().rankManager.getRank(factionPlayer.getFaction(), rankName).isPresent();
         }
     }
-
-    public static void runCommand(CommandContext<CommandSender> ctx) {
+    
+    @Override
+    public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
+        return 
+            baseCommand.literal("create")
+                .required("name", StringParser.stringParser())
+                    .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
+                    .handler(ctx -> runCommand(ctx));
+    }
+    
+    @Override
+    public void runCommand(CommandContext<CommandSender> ctx) {
         Player player = (Player)ctx.sender();
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
         Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();

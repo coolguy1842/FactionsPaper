@@ -65,8 +65,7 @@ processResources {
     }
 }
 
-
-tasks.register(project.name, LaunchMinecraftServerTask) {
+tasks.register('move') {
     dependsOn("build")
     
     doFirst {
@@ -75,6 +74,10 @@ tasks.register(project.name, LaunchMinecraftServerTask) {
             into(layout.buildDirectory.dir("MinecraftServer/plugins"))
         }
     }
+}
+
+tasks.register(project.name, LaunchMinecraftServerTask) {
+    dependsOn('move')
 
 	jarUrl.set(new JarUrl().Paper('1.20.4'))
     agreeEula.set(true)

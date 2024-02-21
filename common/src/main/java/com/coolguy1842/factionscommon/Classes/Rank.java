@@ -6,9 +6,12 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Rank {
-    public enum RankPermissions {
-        INVITE_PLAYER,
-        ADMIN
+    public enum RankPermission {
+        ADMIN,
+        INVITE,
+        KICK,
+        SET_HOME,
+        DEL_HOME
     };
 
     private UUID id;

@@ -39,17 +39,8 @@ public class FactionManager {
     
     public FactionManager(Path configPath) {
         database = new FactionDatabase(configPath);
-
-        factionsList = new ArrayList<>();
         
-        factions = new HashMap<>();
-        factionsByName = new HashMap<>();
-
-        options = new HashMap<>();
-
-        
-        loadFactions();
-        loadOptions();
+        reload();
     }
 
     private void loadFactions() {
@@ -191,6 +182,17 @@ public class FactionManager {
     }
 
 
+    public void reload() {
+        factionsList = new ArrayList<>();
+        
+        factions = new HashMap<>();
+        factionsByName = new HashMap<>();
+
+        options = new HashMap<>();
+
+        this.loadFactions();
+        this.loadOptions();
+    }
     
     public void close() {
         database.close();

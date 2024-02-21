@@ -14,18 +14,22 @@ import java.nio.file.Path;
 import com.coolguy1842.factionscommon.Classes.Database;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 
-public class PlayerDatabase {
-    public Database database;
+public class PlayerDatabase implements DatabaseHandler {
+    @Override public String getName() { return "players"; }
+    
+    private Database database;
+    @Override public Database getDatabase() { return database; }
+
     public PlayerDatabase(Path configPath) {
-        database = new Database(configPath.resolve("players.db").toString());
+        database = new Database(configPath.resolve(getName() + ".db").toString());
 
         initTables();
     }
 
-    private void initTables() {
+    public void initTables() {
         try {
             database.execute("""
-                CREATE TABLE IF NOT EXISTS Players (
+                CREATE TABLE IF NOT EXISTS players (
                     balance BIGINT NOT NULL,
                     faction CHAR(36),
                     rank CHAR(36),

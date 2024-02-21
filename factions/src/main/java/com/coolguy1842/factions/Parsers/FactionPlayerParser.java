@@ -55,8 +55,8 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>,
         
         String input = cmdInput.readString();
         OfflinePlayer player = Bukkit.getOfflinePlayer(input);
-        
-        if(player == null || (!_types.contains(ParserType.INCLUDES_OFFLINE) && !player.isOnline())) {
+
+        if(input == null || input.isEmpty() || player == null || (!_types.contains(ParserType.INCLUDES_OFFLINE) && !player.isOnline())) {
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.INVALID, input, ctx));
         }
 
@@ -110,10 +110,9 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>,
         
         List<Suggestion> out = new ArrayList<>();
 
-        
         Player sender = (Player)ctx.sender();
         FactionPlayer senderFactionPlayer = PlayerUtil.getFactionPlayer(sender.getUniqueId());
-
+        
         List<OfflinePlayer> players = new ArrayList<>(
             Bukkit.getOnlinePlayers()
                 .stream()
@@ -124,8 +123,6 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>,
         if(_types.contains(ParserType.INCLUDES_OFFLINE)) {
             for(OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
                 if(players.contains(offlinePlayer)) continue;
-
-                if(PlayerUtil.getFactionPlayer(offlinePlayer.getUniqueId()).getFaction() == null) continue;
                 players.add(offlinePlayer);
             }
         }
@@ -156,35 +153,9 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>,
         return out;
     }
 
-
-    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> notInFaction() {
-        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION), FactionPlayer.class);
+    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> withOptions(ParserType... options) {
+        return ParserDescriptor.of(new FactionPlayerParser<>(options), FactionPlayer.class);
     }
-
-    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> notInFactionHasNoInvite() {
-        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION, ParserType.HAS_NO_INVITE), FactionPlayer.class);
-    }
-
-    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> notInFactionHasInvite() {
-        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.NOT_IN_FACTION, ParserType.HAS_INVITE), FactionPlayer.class);
-    }
-
-    
-    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> inFaction() {
-        return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_FACTION), FactionPlayer.class);
-    }
-    
-    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> inSameFaction(Boolean hasOffline) {
-        if(hasOffline) return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_SAME_FACTION, ParserType.INCLUDES_OFFLINE), FactionPlayer.class);
-        else return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_SAME_FACTION), FactionPlayer.class);
-        
-    }
-    
-    public static<C> @NonNull ParserDescriptor<C, FactionPlayer> inSameFactionNotLeader(Boolean hasOffline) {
-        if(hasOffline) return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_SAME_FACTION, ParserType.NOT_LEADER, ParserType.INCLUDES_OFFLINE), FactionPlayer.class);
-        else return ParserDescriptor.of(new FactionPlayerParser<>(ParserType.IN_SAME_FACTION, ParserType.NOT_LEADER), FactionPlayer.class);
-    }
-    
 
     public static final class FactionPlayerParseException extends ParserException {
         private final Caption reason;

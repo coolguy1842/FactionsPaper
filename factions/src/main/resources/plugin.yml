@@ -6,3 +6,7 @@ author: coolguy1842
 description: Factions Plugin
 commands:
 permissions:
+    factions.query:
+        default: op
+    factions.execute:
+        default: op

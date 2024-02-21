@@ -16,14 +16,13 @@ import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 
+import com.coolguy1842.factions.Commands.ExecuteCommand;
 import com.coolguy1842.factions.Commands.FactionCommand;
+import com.coolguy1842.factions.Commands.QueryCommand;
 import com.coolguy1842.factions.Events.Player.OnPlayerChat;
 import com.coolguy1842.factions.Events.Player.OnPlayerJoin;
 import com.coolguy1842.factions.Events.Player.OnPlayerLeave;
-import com.coolguy1842.factions.Parsers.FactionParser;
-import com.coolguy1842.factions.Parsers.FactionPlayerParser;
 import com.coolguy1842.factions.Parsers.ParserCaptions;
-import com.coolguy1842.factions.Parsers.RankParser;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
@@ -63,11 +62,13 @@ public class Factions extends JavaPlugin {
             ((PaperCommandManager<CommandSender>)commandManager).registerAsynchronousCompletions();
         }
 
-        registerParsers();
         registerCaptions();
 
         commandManager.registerCommandPostProcessor(FactionRequirement.postprocessor);
         FactionCommand.register(commandManager);
+        
+        QueryCommand.register(commandManager);
+        ExecuteCommand.register(commandManager);
     }
 
     private void registerCaptions() {        
@@ -94,23 +95,18 @@ public class Factions extends JavaPlugin {
 
 
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.INVALID, ParserCaptions.Providers.Rank.getProvider(ParserCaptions.Keys.Rank.INVALID)))
-            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.NO_FACTION, ParserCaptions.Providers.Rank.getProvider(ParserCaptions.Keys.Rank.NO_FACTION)));
-    }
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.NO_FACTION, ParserCaptions.Providers.Rank.getProvider(ParserCaptions.Keys.Rank.NO_FACTION)))
 
-    private void registerParsers() {
-        commandManager.parserRegistry()
-            .registerParser(FactionPlayerParser.notInFaction())
-            .registerParser(FactionPlayerParser.notInFactionHasNoInvite())
-            .registerParser(FactionPlayerParser.notInFactionHasInvite())
-            .registerParser(FactionPlayerParser.inFaction())
-            
-            .registerParser(FactionParser.anyFaction())
-            .registerParser(FactionParser.invitingFaction())
-            .registerParser(FactionParser.notOwnFaction())
-            
-            .registerParser(RankParser.rankParser());
-    }
 
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.Permission.INVALID, ParserCaptions.Providers.Rank.Permission.getProvider(ParserCaptions.Keys.Rank.Permission.INVALID)))
+
+
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Home.INVALID, ParserCaptions.Providers.Home.getProvider(ParserCaptions.Keys.Home.INVALID)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Home.NO_FACTION, ParserCaptions.Providers.Home.getProvider(ParserCaptions.Keys.Home.NO_FACTION)))
+
+
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Database.INVALID, ParserCaptions.Providers.Database.getProvider(ParserCaptions.Keys.Database.INVALID)));
+    }
 
     private void initEvents() {
         this.getServer().getPluginManager().registerEvents(new OnPlayerJoin(), this);
@@ -122,6 +118,8 @@ public class Factions extends JavaPlugin {
     @Override
     public void onDisable() {
         getFactionsCommon().close();
+
+        commandManager = null;
         plugin = null;
     }
 

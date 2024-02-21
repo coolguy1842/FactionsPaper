@@ -18,7 +18,6 @@ import org.incendo.cloud.suggestion.BlockingSuggestionProvider;
 import org.incendo.cloud.suggestion.Suggestion;
 
 import com.coolguy1842.factions.Factions;
-import com.coolguy1842.factions.Parsers.FactionPlayerParser.FactionPlayerParseException;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
@@ -28,7 +27,7 @@ public class RankParser<C> implements ArgumentParser<C, Rank>, BlockingSuggestio
     @Override
     public @NonNull ArgumentParseResult<@NonNull Rank> parse(@NonNull CommandContext<C> ctx, @NonNull CommandInput cmdInput) {
         if(!(ctx.sender() instanceof Player)) {
-            return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.NOT_PLAYER, "", ctx));
+            return ArgumentParseResult.failure(new RankParseException(ParserCaptions.Keys.NOT_PLAYER, "", ctx));
         }
 
         Player sender = (Player)ctx.sender();
@@ -36,7 +35,7 @@ public class RankParser<C> implements ArgumentParser<C, Rank>, BlockingSuggestio
         Optional<Faction> factionOptional = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction());
 
         if(factionPlayer.getFaction() == null || !factionOptional.isPresent()) {
-            return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.Rank.NO_FACTION, "", ctx));
+            return ArgumentParseResult.failure(new RankParseException(ParserCaptions.Keys.Rank.NO_FACTION, "", ctx));
         }
         
         Faction faction = factionOptional.get();
@@ -44,7 +43,7 @@ public class RankParser<C> implements ArgumentParser<C, Rank>, BlockingSuggestio
 
         Optional<Rank> rank = Factions.getFactionsCommon().rankManager.getRank(faction.getID(), rankName);
         if(!rank.isPresent()) {
-            return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.Rank.INVALID, rankName, ctx));
+            return ArgumentParseResult.failure(new RankParseException(ParserCaptions.Keys.Rank.INVALID, rankName, ctx));
         }
 
         return ArgumentParseResult.success(rank.get());

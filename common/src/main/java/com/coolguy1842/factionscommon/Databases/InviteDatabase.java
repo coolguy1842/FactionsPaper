@@ -16,15 +16,19 @@ import com.coolguy1842.factionscommon.Classes.Database;
 import com.coolguy1842.factionscommon.Classes.Invite;
 import com.coolguy1842.factionscommon.Classes.Invite.InviteType;
 
-public class InviteDatabase {
-    public Database database;
+public class InviteDatabase implements DatabaseHandler {
+    @Override public String getName() { return "invites"; }
+
+    private Database database;
+    @Override public Database getDatabase() { return database; }
+
     public InviteDatabase(Path configPath) {
-        database = new Database(configPath.resolve("invites.db").toString());
+        database = new Database(configPath.resolve(getName() + ".db").toString());
 
         initTables();
     }
 
-    private void initTables() {
+    public void initTables() {
         try {
             database.execute("""
                 CREATE TABLE IF NOT EXISTS invites (
@@ -45,14 +49,14 @@ public class InviteDatabase {
         try(CachedRowSet rows = database.query("SELECT * FROM invites")) {
             if(rows == null || rows.size() <= 0) return out;
             
-            rows.next();
+            while(rows.next()) {
+                UUID inviter = UUID.fromString(rows.getString("inviter"));
+                UUID invited = UUID.fromString(rows.getString("invited"));
 
-            UUID inviter = UUID.fromString(rows.getString("inviter"));
-            UUID invited = UUID.fromString(rows.getString("invited"));
+                InviteType type = InviteType.valueOf(rows.getString("type"));
 
-            InviteType type = InviteType.valueOf(rows.getString("type"));
-
-            out.add(new Invite(inviter, invited, type));
+                out.add(new Invite(inviter, invited, type));
+            }
         }
         catch (SQLException e) { e.printStackTrace();}
 

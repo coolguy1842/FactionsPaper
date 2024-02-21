@@ -16,15 +16,19 @@ import com.coolguy1842.factionscommon.Classes.Database;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionOption;
 
-public class FactionDatabase {
-    public Database database;
+public class FactionDatabase implements DatabaseHandler {
+    @Override public String getName() { return "factions"; }
+
+    private Database database;
+    @Override public Database getDatabase() { return database; }
+
     public FactionDatabase(Path configPath) {
-        database = new Database(configPath.resolve("factions.db").toString());
+        database = new Database(configPath.resolve(getName() + ".db").toString());
 
         initTables();
     }
 
-    private void initTables() {
+    public void initTables() {
         try {
             database.execute("""
                 CREATE TABLE IF NOT EXISTS factions (

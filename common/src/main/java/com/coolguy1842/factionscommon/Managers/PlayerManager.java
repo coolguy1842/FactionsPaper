@@ -27,11 +27,7 @@ public class PlayerManager {
 
     public PlayerManager(Path configPath) {
         database = new PlayerDatabase(configPath);
-
-        players = new HashMap<>();
-        playersList = new ArrayList<>();
-
-        loadPlayers();
+        reload();
     }
     
     private void loadPlayers() {
@@ -107,6 +103,13 @@ public class PlayerManager {
     }
 
     
+    public void reload() {
+        players = new HashMap<>();
+        playersList = new ArrayList<>();
+
+        loadPlayers();
+    }
+
     public void close() {
         database.close();
         database = null;

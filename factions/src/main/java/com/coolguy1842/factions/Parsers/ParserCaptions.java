@@ -48,12 +48,30 @@ public class ParserCaptions {
         }
 
         public static final class Rank {
+            public static final class Permission {
+                public static final String INVALID_KEY = "argument.parse.failure.rank.permission.invalid";
+                public static final Caption INVALID = Caption.of(INVALID_KEY);
+            }
+
             public static final String INVALID_KEY = "argument.parse.failure.rank.invalid";
             public static final Caption INVALID = Caption.of(INVALID_KEY);
             
             public static final String NO_FACTION_KEY = "argument.parse.failure.rank.no.faction";
             public static final Caption NO_FACTION = Caption.of(NO_FACTION_KEY);
+        }
+        
+        public static final class Home {
+            public static final String INVALID_KEY = "argument.parse.failure.home.invalid";
+            public static final Caption INVALID = Caption.of(INVALID_KEY);
+            
+            public static final String NO_FACTION_KEY = "argument.parse.failure.home.no.faction";
+            public static final Caption NO_FACTION = Caption.of(NO_FACTION_KEY);
+        }
 
+
+        public static final class Database {
+            public static final String INVALID_KEY = "argument.parse.failure.database.invalid";
+            public static final Caption INVALID = Caption.of(INVALID_KEY);
         }
     }
 
@@ -89,11 +107,37 @@ public class ParserCaptions {
             }
         }
     
-        public static final class Rank {
+        public static final class Rank {    
+            public static final class Permission {
+                public static final Function<CommandSender, String> getProvider(Caption caption) {
+                    switch(caption.key()) {
+                        default: return (CommandSender sender) -> { return "No rank permission named <input>"; };
+                    }
+                }
+            }
+
             public static final Function<CommandSender, String> getProvider(Caption caption) {
                 switch(caption.key()) {
                     case ParserCaptions.Keys.Rank.NO_FACTION_KEY: return (CommandSender sender) -> { return "You must be in a faction"; };
                     default: return (CommandSender sender) -> { return "No rank named <input>"; };
+                }
+            }
+        }
+
+        public static final class Home {
+            public static final Function<CommandSender, String> getProvider(Caption caption) {
+                switch(caption.key()) {
+                    case ParserCaptions.Keys.Home.NO_FACTION_KEY: return (CommandSender sender) -> { return "You must be in a faction"; };
+                    default: return (CommandSender sender) -> { return "No home named <input>"; };
+                }
+            }
+        }
+
+        
+        public static final class Database {
+            public static final Function<CommandSender, String> getProvider(Caption caption) {
+                switch(caption.key()) {
+                    default: return (CommandSender sender) -> { return "No database named <input>"; };
                 }
             }
         }

@@ -28,8 +28,7 @@ public class InviteManager {
     public InviteManager(Path configPath) {
         database = new InviteDatabase(configPath);
 
-        invitesList = new ArrayList<>();
-        loadInvites();
+        reload();
     }
 
     private void loadInvites() {
@@ -100,6 +99,11 @@ public class InviteManager {
         removeFromCache(getInvite(inviter, invited).get());
     }
     
+
+    public void reload() {
+        invitesList = new ArrayList<>();
+        loadInvites();
+    }
 
     public void close() {
         database.close();

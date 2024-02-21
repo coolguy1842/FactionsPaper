@@ -17,15 +17,19 @@ import javax.sql.rowset.CachedRowSet;
 import com.coolguy1842.factionscommon.Classes.Database;
 import com.coolguy1842.factionscommon.Classes.Rank;
 
-public class RankDatabase {
-    public Database database;
+public class RankDatabase implements DatabaseHandler {
+    @Override public String getName() { return "ranks"; }
+    
+    private Database database;
+    @Override public Database getDatabase() { return database; }
+
     public RankDatabase(Path configPath) {
-        database = new Database(configPath.resolve("ranks.db").toString());
+        database = new Database(configPath.resolve(getName() + ".db").toString());
 
         initTables();
     }
 
-    private void initTables() {
+    public void initTables() {
         try {
             database.execute("""
                 CREATE TABLE IF NOT EXISTS ranks (

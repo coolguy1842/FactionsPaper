@@ -7,16 +7,18 @@ import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.permissions.PermissionAttachment;
 import org.incendo.cloud.permission.Permission;
 
 import com.coolguy1842.factions.Factions;
-import com.coolguy1842.factions.Util.RankUtil.RankPermission;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 import com.coolguy1842.factionscommon.Classes.Rank;
+import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 
 import net.kyori.adventure.text.Component;
 
@@ -138,5 +140,10 @@ public class PlayerUtil {
         );
 
         player.sendMessage(MessageUtil.format("{} You have rejected the invite to {}!", Factions.getPrefix(), Component.text(factionOptional.get().getName())));
+    }
+
+
+    public static void teleportPlayer(Player player, Location location) {
+        player.teleportAsync(location, TeleportCause.PLUGIN);
     }
 }
