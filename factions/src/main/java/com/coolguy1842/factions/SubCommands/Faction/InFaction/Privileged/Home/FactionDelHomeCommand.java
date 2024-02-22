@@ -1,4 +1,4 @@
-package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged;
+package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Home;
 
 import java.util.List;
 import java.util.Map;
@@ -72,10 +72,9 @@ public class FactionDelHomeCommand implements Subcommand {
     public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
         return List.of(
             baseCommand.literal(getName())
-                .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
+                .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement(), new Requirement()))
                 .permission(getPermission())
                 .optional("home", HomeParser.homeParser(ParserType.FACTION))
-                    .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
                     .handler(ctx -> runCommand(ctx))
         );
     }

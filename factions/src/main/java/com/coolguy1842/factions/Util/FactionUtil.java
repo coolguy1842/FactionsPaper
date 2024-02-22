@@ -1,6 +1,7 @@
 package com.coolguy1842.factions.Util;
 
 import java.util.UUID;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.bukkit.Server;
@@ -9,7 +10,10 @@ import org.bukkit.entity.Player;
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
+import com.coolguy1842.factionscommon.Classes.Home;
 import com.coolguy1842.factionscommon.Classes.Invite;
+import com.coolguy1842.factionscommon.Classes.Rank;
+import com.coolguy1842.factionscommon.Classes.Vault;
 
 import net.kyori.adventure.text.Component;
 
@@ -22,9 +26,26 @@ public class FactionUtil {
         String factionName = faction.getName();
 
         // remove all invites from this faction
-        for(Invite invite : Factions.getFactionsCommon().inviteManager.getInvitesWithInviter(factionID)) {
+        for(Invite invite : new ArrayList<>(Factions.getFactionsCommon().inviteManager.getInvitesWithInviter(factionID))) {
             Factions.getFactionsCommon().inviteManager.removeInvite(invite.getInviter(), invite.getInvited());
         }
+        
+        // remove all homes from this faction
+        for(Home home : new ArrayList<>(Factions.getFactionsCommon().homeManager.getHomesWithOwner(factionID))) {
+            Factions.getFactionsCommon().homeManager.removeHome(home.getID());
+        }
+        
+        // remove all vaults from this faction
+        for(Vault vault : new ArrayList<>(Factions.getFactionsCommon().vaultManager.getVaultsInFaction(factionID))) {
+            VaultUtil.removeVaultInventory(vault);
+            Factions.getFactionsCommon().vaultManager.removeVault(vault.getID());
+        }
+
+        // remove all ranks from this faction
+        for(Rank rank : new ArrayList<>(Factions.getFactionsCommon().rankManager.getRanksInFaction(factionID))) {
+            Factions.getFactionsCommon().rankManager.removeRank(rank.getID());
+        }
+
 
         // kick all players from the faction
         for(FactionPlayer fP : Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionID)) {

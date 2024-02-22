@@ -47,6 +47,7 @@ public class ExecuteCommand {
                 case "ranks": Factions.getFactionsCommon().rankManager.reload(); break;
                 case "invites": Factions.getFactionsCommon().inviteManager.reload(); break;
                 case "homes": Factions.getFactionsCommon().homeManager.reload(); break;
+                case "vaults": Factions.getFactionsCommon().vaultManager.reload(); break;
                 default: break;
             }
             

@@ -14,6 +14,7 @@ import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.processors.requirements.Requirements;
 
 import com.coolguy1842.factions.Factions;
+import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
@@ -27,7 +28,6 @@ public class FactionCreateCommand implements Subcommand {
     private final class Requirement implements FactionRequirement.Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
-                Map.entry("notPlayer", Component.text("Only players can use this!")),
                 Map.entry("factionExists", Component.text("There already exists a faction named {}!")),
                 Map.entry("error", Component.text("Error"))
             );
@@ -35,10 +35,6 @@ public class FactionCreateCommand implements Subcommand {
 
         @Override
         public @NonNull Component errorMessage(final @NonNull CommandContext<CommandSender> ctx) {
-            if(!(ctx.sender() instanceof Player)) {
-                return getErrorMessages().get("notPlayer");
-            }
-        
             String factionName = ctx.get("faction");
             if(Factions.getFactionsCommon().factionManager.getFaction(factionName).isPresent()) {
                 return MessageUtil.format(getErrorMessages().get("factionExists"), Component.text(factionName));
@@ -49,8 +45,6 @@ public class FactionCreateCommand implements Subcommand {
 
         @Override
         public boolean evaluateRequirement(final @NonNull CommandContext<CommandSender> ctx) {
-            if(!(ctx.sender() instanceof Player)) return false;
-
             return !Factions.getFactionsCommon().factionManager.getFaction((String)ctx.get("faction")).isPresent();
         }
     }
@@ -64,7 +58,7 @@ public class FactionCreateCommand implements Subcommand {
         return List.of(
             baseCommand.literal(getName())
                 .required("faction", StringParser.greedyStringParser())
-                .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new Requirement()))
+                .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement(), new Requirement()))
                 .permission(getPermission())
                 .handler(ctx -> runCommand(ctx))
         );

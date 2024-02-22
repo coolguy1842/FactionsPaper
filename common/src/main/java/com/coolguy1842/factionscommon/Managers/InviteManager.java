@@ -41,30 +41,30 @@ public class InviteManager {
 
     public List<Invite> getInvites() { return invitesList; }
     public Optional<Invite> getInvite(UUID inviter, UUID invited) {
-        assertThat(inviter != null).isTrue().withFailMessage("InviteManager#getInvite failed: inviter == null");
-        assertThat(invited != null).isTrue().withFailMessage("InviteManager#getInvite failed: invited == null");
+        assertThat(inviter).isNotNull().withFailMessage("InviteManager#getInvite failed: inviter == null");
+        assertThat(invited).isNotNull().withFailMessage("InviteManager#getInvite failed: invited == null");
 
         return invitesList.stream().filter(x -> x.getInviter().equals(inviter) && x.getInvited().equals(invited)).findFirst();
     }
 
     public List<Invite> getInvitesWithInviter(UUID inviter) {
-        assertThat(inviter != null).isTrue().withFailMessage("InviteManager#getInvitesWithInviter failed: inviter == null");
+        assertThat(inviter).isNotNull().withFailMessage("InviteManager#getInvitesWithInviter failed: inviter == null");
         return invitesList.stream().filter(x -> x.getInviter().equals(inviter)).toList();
     }
 
     public List<Invite> getInvitesWithInvited(UUID invited) {
-        assertThat(invited != null).isTrue().withFailMessage("InviteManager#getInvitesWithInvited failed: invited == null");
+        assertThat(invited).isNotNull().withFailMessage("InviteManager#getInvitesWithInvited failed: invited == null");
         return invitesList.stream().filter(x -> x.getInvited().equals(invited)).toList();
     }
 
 
     public Invite addInvite(UUID inviter, UUID invited, InviteType type) {
-        assertThat(inviter != null).isTrue().withFailMessage("InviteManager#addInvite failed: inviter == null");
-        assertThat(invited != null).isTrue().withFailMessage("InviteManager#addInvite failed: invited == null");
-        assertThat(type != null).isTrue().withFailMessage("InviteManager#addInvite failed: type == null");
+        assertThat(inviter).isNotNull().withFailMessage("InviteManager#addInvite failed: inviter == null");
+        assertThat(invited).isNotNull().withFailMessage("InviteManager#addInvite failed: invited == null");
+        assertThat(type).isNotNull().withFailMessage("InviteManager#addInvite failed: type == null");
 
         Optional<Invite> inviteOptional = database.addInvite(inviter, invited, type);
-        assertThat(inviteOptional.isPresent()).isTrue().withFailMessage("InviteManager#addInvite failed: invite with inviter: %s, invited: %s, type: %s not created.", inviter, invited, type);
+        assertThat(inviteOptional).isPresent().withFailMessage("InviteManager#addInvite failed: invite with inviter: %s, invited: %s, type: %s not created.", inviter, invited, type);
 
         Invite invite = inviteOptional.get();
         addToCache(invite);
@@ -74,7 +74,7 @@ public class InviteManager {
 
     
     public void removeInvitesWithInvited(UUID invited) {
-        assertThat(invited != null).isTrue().withFailMessage("InviteManager#removeInvitesWithInvited failed: invited == null");
+        assertThat(invited).isNotNull().withFailMessage("InviteManager#removeInvitesWithInvited failed: invited == null");
 
         assertThat(database.removeInviteWithInvited(invited)).isTrue().withFailMessage("InviteManager#removeInviteWithInvited failed with invited: %s", invited);
         (new ArrayList<>(invitesList)).stream().filter(invite -> invite.getInvited().equals(invited)).forEach(invite -> {
@@ -83,7 +83,7 @@ public class InviteManager {
     }
     
     public void removeInvitesWithInviter(UUID inviter) {
-        assertThat(inviter != null).isTrue().withFailMessage("InviteManager#removeInvitesWithInviter failed: inviter == null");
+        assertThat(inviter).isNotNull().withFailMessage("InviteManager#removeInvitesWithInviter failed: inviter == null");
 
         assertThat(database.removeInviteWithInviter(inviter)).isTrue().withFailMessage("InviteManager#removeInviteWithInviter failed with inviter: %s", inviter);
         (new ArrayList<>(invitesList)).stream().filter(invite -> invite.getInvited().equals(inviter)).forEach(invite -> {
@@ -92,8 +92,8 @@ public class InviteManager {
     }
 
     public void removeInvite(UUID inviter, UUID invited) {
-        assertThat(inviter != null).isTrue().withFailMessage("InviteManager#removeInvite failed: inviter == null");
-        assertThat(invited != null).isTrue().withFailMessage("InviteManager#removeInvite failed: invited == null");
+        assertThat(inviter).isNotNull().withFailMessage("InviteManager#removeInvite failed: inviter == null");
+        assertThat(invited).isNotNull().withFailMessage("InviteManager#removeInvite failed: invited == null");
 
         assertThat(database.removeInvite(inviter, invited)).isTrue().withFailMessage("InviteManager#removeInvite failed with inviter: %s & invited: %s", inviter, invited);
         removeFromCache(getInvite(inviter, invited).get());

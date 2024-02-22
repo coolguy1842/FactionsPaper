@@ -70,11 +70,11 @@ public class HomeDatabase implements DatabaseHandler {
 
 
     public Optional<Home> addHome(UUID id, String name, String location, UUID owner, OwnerType ownerType) {
-        assertThat(id != null).isTrue().withFailMessage("HomeDatabase#addHome failed: id == null");
-        assertThat(name != null).isTrue().withFailMessage("HomeDatabase#addHome failed: name == null");
-        assertThat(location != null).isTrue().withFailMessage("HomeDatabase#addHome failed: location == null");
-        assertThat(owner != null).isTrue().withFailMessage("HomeDatabase#addHome failed: owner == null");
-        assertThat(ownerType != null).isTrue().withFailMessage("HomeDatabase#addHome failed: ownerType == null");
+        assertThat(id).isNotNull().withFailMessage("HomeDatabase#addHome failed: id == null");
+        assertThat(name).isNotNull().withFailMessage("HomeDatabase#addHome failed: name == null");
+        assertThat(location).isNotNull().withFailMessage("HomeDatabase#addHome failed: location == null");
+        assertThat(owner).isNotNull().withFailMessage("HomeDatabase#addHome failed: owner == null");
+        assertThat(ownerType).isNotNull().withFailMessage("HomeDatabase#addHome failed: ownerType == null");
 
         try {
             database.execute(
@@ -91,7 +91,7 @@ public class HomeDatabase implements DatabaseHandler {
     }
 
     public Boolean removeHome(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("HomeDatabase#removeHome failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("HomeDatabase#removeHome failed: id == null");
 
         try {
             database.execute("DELETE FROM homes WHERE id = ?", id);
@@ -105,8 +105,8 @@ public class HomeDatabase implements DatabaseHandler {
 
     
     public void setHomeName(UUID id, String name) {
-        assertThat(id != null).isTrue().withFailMessage("HomeDatabase#setHomeName failed: id == null");
-        assertThat(name != null).isTrue().withFailMessage("HomeDatabase#setHomeName failed: name == null");
+        assertThat(id).isNotNull().withFailMessage("HomeDatabase#setHomeName failed: id == null");
+        assertThat(name).isNotNull().withFailMessage("HomeDatabase#setHomeName failed: name == null");
 
         try {
             database.execute("UPDATE homes SET name = ? WHERE id = ?", name, id);
@@ -117,8 +117,8 @@ public class HomeDatabase implements DatabaseHandler {
     }
     
     public void setHomeLocation(UUID id, String location) {
-        assertThat(id != null).isTrue().withFailMessage("HomeDatabase#setHomeName failed: id == null");
-        assertThat(location != null).isTrue().withFailMessage("HomeDatabase#setHomeName failed: location == null");
+        assertThat(id).isNotNull().withFailMessage("HomeDatabase#setHomeName failed: id == null");
+        assertThat(location).isNotNull().withFailMessage("HomeDatabase#setHomeName failed: location == null");
 
         try {
             database.execute("UPDATE homes SET location = ? WHERE id = ?", location, id);

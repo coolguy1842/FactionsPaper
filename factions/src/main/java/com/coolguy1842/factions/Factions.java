@@ -19,6 +19,8 @@ import org.incendo.cloud.paper.PaperCommandManager;
 import com.coolguy1842.factions.Commands.ExecuteCommand;
 import com.coolguy1842.factions.Commands.FactionCommand;
 import com.coolguy1842.factions.Commands.QueryCommand;
+import com.coolguy1842.factions.Events.Inventory.OnInventoryClose;
+import com.coolguy1842.factions.Events.Inventory.OnInventoryInteract;
 import com.coolguy1842.factions.Events.Player.OnPlayerChat;
 import com.coolguy1842.factions.Events.Player.OnPlayerJoin;
 import com.coolguy1842.factions.Events.Player.OnPlayerLeave;
@@ -104,6 +106,10 @@ public class Factions extends JavaPlugin {
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Home.INVALID, ParserCaptions.Providers.Home.getProvider(ParserCaptions.Keys.Home.INVALID)))
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Home.NO_FACTION, ParserCaptions.Providers.Home.getProvider(ParserCaptions.Keys.Home.NO_FACTION)))
 
+            
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Vault.INVALID, ParserCaptions.Providers.Vault.getProvider(ParserCaptions.Keys.Vault.INVALID)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Vault.NO_FACTION, ParserCaptions.Providers.Vault.getProvider(ParserCaptions.Keys.Vault.NO_FACTION)))
+
 
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Database.INVALID, ParserCaptions.Providers.Database.getProvider(ParserCaptions.Keys.Database.INVALID)));
     }
@@ -112,6 +118,9 @@ public class Factions extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new OnPlayerJoin(), this);
         this.getServer().getPluginManager().registerEvents(new OnPlayerLeave(), this);
         this.getServer().getPluginManager().registerEvents(new OnPlayerChat(), this);
+        
+        this.getServer().getPluginManager().registerEvents(new OnInventoryInteract(), this);
+        this.getServer().getPluginManager().registerEvents(new OnInventoryClose(), this);
     }
 
 

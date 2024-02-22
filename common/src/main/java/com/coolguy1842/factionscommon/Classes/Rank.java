@@ -11,7 +11,10 @@ public class Rank {
         INVITE,
         KICK,
         SET_HOME,
-        DEL_HOME
+        DEL_HOME,
+        CREATE_VAULT,
+        REMOVE_VAULT,
+        OPEN_VAULT
     };
 
     private UUID id;

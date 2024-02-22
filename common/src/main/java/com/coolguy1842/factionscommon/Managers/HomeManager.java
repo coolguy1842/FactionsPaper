@@ -29,6 +29,7 @@ public class HomeManager {
     void removeFromCache(Home home) {
         homes.remove(home.getID());
 
+        if(!homesFromOwners.containsKey(home.getOwner())) return;
         if(!homesFromOwners.get(home.getOwner()).contains(home)) return;
         homesFromOwners.get(home.getOwner()).remove(home);
     }
@@ -48,7 +49,7 @@ public class HomeManager {
 
     
     public List<Home> getHomesWithOwner(UUID owner) {
-        assertThat(owner != null).isTrue().withFailMessage("HomeManager#getHomesWithOwner failed: owner == null");
+        assertThat(owner).isNotNull().withFailMessage("HomeManager#getHomesWithOwner failed: owner == null");
 
         if(!homesFromOwners.containsKey(owner)) return new ArrayList<>();
         return homesFromOwners.get(owner);
@@ -56,29 +57,29 @@ public class HomeManager {
 
 
     public Optional<Home> getHome(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("HomeManager#getHome failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("HomeManager#getHome failed: id == null");
 
         if(!homes.containsKey(id)) return Optional.empty();
         return Optional.of(homes.get(id));
     }
     
     public Optional<Home> getHome(UUID owner, String name) {
-        assertThat(owner != null).isTrue().withFailMessage("HomeManager#getHome failed: owner == null");
-        assertThat(name != null).isTrue().withFailMessage("HomeManager#getHome failed: name == null");
+        assertThat(owner).isNotNull().withFailMessage("HomeManager#getHome failed: owner == null");
+        assertThat(name).isNotNull().withFailMessage("HomeManager#getHome failed: name == null");
 
         if(!homesFromOwners.containsKey(owner)) return Optional.empty();
         return homesFromOwners.get(owner).stream().filter(x -> x.getName().equals(name)).findFirst();
     }
 
     public Home addHome(UUID id, String name, String location, UUID owner, OwnerType ownerType) {
-        assertThat(id != null).isTrue().withFailMessage("HomeManager#addHome failed: id == null");
-        assertThat(name != null).isTrue().withFailMessage("HomeManager#addHome failed: name == null");
-        assertThat(location != null).isTrue().withFailMessage("HomeManager#addHome failed: location == null");
-        assertThat(owner != null).isTrue().withFailMessage("HomeManager#addHome failed: owner == null");
-        assertThat(ownerType != null).isTrue().withFailMessage("HomeManager#addHome failed: ownerType == null");
+        assertThat(id).isNotNull().withFailMessage("HomeManager#addHome failed: id == null");
+        assertThat(name).isNotNull().withFailMessage("HomeManager#addHome failed: name == null");
+        assertThat(location).isNotNull().withFailMessage("HomeManager#addHome failed: location == null");
+        assertThat(owner).isNotNull().withFailMessage("HomeManager#addHome failed: owner == null");
+        assertThat(ownerType).isNotNull().withFailMessage("HomeManager#addHome failed: ownerType == null");
 
         Optional<Home> homeOptional = database.addHome(id, name, location, owner, ownerType);
-        assertThat(homeOptional.isPresent()).isTrue().withFailMessage("HomeManager#addHome failed: home with id: %s, name: %s, owner: %s not created.", id, name, owner);
+        assertThat(homeOptional).isPresent().withFailMessage("HomeManager#addHome failed: home with id: %s, name: %s, owner: %s not created.", id, name, owner);
         
         Home home = homeOptional.get();
         addToCache(home);
@@ -87,6 +88,8 @@ public class HomeManager {
     }
 
     public void removeHome(UUID id) {
+        assertThat(id).isNotNull().withFailMessage("HomeManager#removeHome failed: id == null.", id);
+        assertThat(homes).containsKey(id).withFailMessage("HomeManager#removeHome failed: home with id: %s doesn't exist.", id);
         Home home = homes.get(id);
 
         removeFromCache(home);
@@ -94,8 +97,11 @@ public class HomeManager {
     }
 
     public void removeHome(UUID owner, String name) {
+        assertThat(owner).isNotNull().withFailMessage("HomeManager#removeHome failed: owner == null.", owner);
+        assertThat(name).isNotNull().withFailMessage("HomeManager#removeHome failed: name == null.", name);
+
         Optional<Home> homeOptional = getHome(owner, name);
-        assertThat(homeOptional.isPresent()).isTrue().withFailMessage("HomeManager#removeHome failed: home with owner: %s, name: %s doesn't exist.", owner, name);
+        assertThat(homeOptional).isPresent().withFailMessage("HomeManager#removeHome failed: home with owner: %s, name: %s doesn't exist.", owner, name);
 
         removeFromCache(homeOptional.get());
         database.removeHome(homeOptional.get().getID());
@@ -103,6 +109,10 @@ public class HomeManager {
 
 
     public void setHomeName(UUID id, String name) {
+        assertThat(id).isNotNull().withFailMessage("HomeManager#setHomeName failed: id == null.", id);
+        assertThat(name).isNotNull().withFailMessage("HomeManager#setHomeName failed: name == null.", name);
+
+        assertThat(homes).containsKey(id).withFailMessage("HomeManager#setHomeName failed: home with id: %s doesn't exist.", id);
         Home home = homes.get(id);
 
         home.setName(name);
@@ -110,9 +120,13 @@ public class HomeManager {
     }
     
     public void setHomeName(UUID owner, String currentName, String newName) {
+        assertThat(owner).isNotNull().withFailMessage("HomeManager#setHomeName failed: owner == null.", owner);
+        assertThat(currentName).isNotNull().withFailMessage("HomeManager#setHomeName failed: currentName == null.",currentName);
+        assertThat(newName).isNotNull().withFailMessage("HomeManager#setHomeName failed: newName == null.", newName);
+
         Optional<Home> homeOptional = getHome(owner, currentName);
-        assertThat(homeOptional.isPresent()).isTrue().withFailMessage("HomeManager#setHomeName failed: home with owner: %s, name: %s doesn't exist.", owner, currentName);
-        setHomeName(homeOptional.get().getID(), newName);
+        assertThat(homeOptional).isPresent().withFailMessage("HomeManager#setHomeName failed: home with owner: %s, name: %s doesn't exist.", owner, currentName);
+        database.setHomeName(homeOptional.get().getID(), newName);
     }
 
 
@@ -120,7 +134,7 @@ public class HomeManager {
         assertThat(id).isNotNull().withFailMessage("HomeManager#setHomeLocation failed: id == null.", id);
         assertThat(location).isNotNull().withFailMessage("HomeManager#setHomeLocation failed: location == null.", id);
 
-        assertThat(homes).containsKey(id).withFailMessage("HomeManager#setHomeLocation failed: Home with id: %s does not exist.", id);
+        assertThat(homes).containsKey(id).withFailMessage("HomeManager#setHomeLocation failed: home with id: %s does not exist.", id);
         
         Home home = homes.get(id);
 
@@ -130,7 +144,7 @@ public class HomeManager {
     
     public void setHomeLocation(UUID owner, String name, String location) {
         Optional<Home> homeOptional = getHome(owner, name);
-        assertThat(homeOptional.isPresent()).isTrue().withFailMessage("HomeManager#setHomeLocation failed: home with owner: %s, name: %s doesn't exist.", owner, name);
+        assertThat(homeOptional).isPresent().withFailMessage("HomeManager#setHomeLocation failed: home with owner: %s, name: %s doesn't exist.", owner, name);
         setHomeLocation(homeOptional.get().getID(), location);
     }
 

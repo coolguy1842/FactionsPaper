@@ -51,10 +51,10 @@ public class FactionManager {
 
 
     public Faction addFaction(UUID id, String name, UUID leader) {
-        assertThat(id != null).isTrue().withFailMessage("FactionManager#addFaction failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("FactionManager#addFaction failed: id == null");
 
         Optional<Faction> factionOptional = database.addFaction(id, name, 0L, leader);
-        assertThat(factionOptional.isPresent()).isTrue().withFailMessage("FactionManager#addFaction failed: faction with id: %s, name: %s not created.", id, name);
+        assertThat(factionOptional).isPresent().withFailMessage("FactionManager#addFaction failed: faction with id: %s, name: %s not created.", id, name);
 
         Faction faction = factionOptional.get();
         addToCache(faction);
@@ -63,7 +63,7 @@ public class FactionManager {
     }
     
     public void removeFaction(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("FactionManager#removeFaction failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("FactionManager#removeFaction failed: id == null");
 
         assertThat(database.removeFaction(id)).isTrue().withFailMessage("FactionManager#removeFaction failed: no faction with id: %s removed.", id);
         removeFromCache(factions.get(id));
@@ -93,8 +93,8 @@ public class FactionManager {
 
 
     public void setFactionName(UUID id, String name) {
-        assertThat(id != null).isTrue().withFailMessage("FactionManager#setFactionName failed: id == null");
-        assertThat(name != null).isTrue().withFailMessage("FactionManager#setFactionName failed: name == null");
+        assertThat(id).isNotNull().withFailMessage("FactionManager#setFactionName failed: id == null");
+        assertThat(name).isNotNull().withFailMessage("FactionManager#setFactionName failed: name == null");
 
         assertThat(factions).containsKey(id).withFailMessage("FactionManager#setFactionName failed: Faction with id: %s does not exist.", id);
         
@@ -103,8 +103,8 @@ public class FactionManager {
     }
 
     public void setFactionBalance(UUID id, Long balance) {
-        assertThat(id != null).isTrue().withFailMessage("FactionManager#setFactioBalance failed: id == null");
-        assertThat(balance != null).isTrue().withFailMessage("FactionManager#setFactionBalance failed: balance == null");
+        assertThat(id).isNotNull().withFailMessage("FactionManager#setFactioBalance failed: id == null");
+        assertThat(balance).isNotNull().withFailMessage("FactionManager#setFactionBalance failed: balance == null");
 
         assertThat(factions).containsKey(id).withFailMessage("FactionManager#setFactionBalance failed: Faction with id: %s does not exist.", id);
 
@@ -113,8 +113,8 @@ public class FactionManager {
     }
 
     public void setFactionLeader(UUID id, UUID leader) {
-        assertThat(id != null).isTrue().withFailMessage("FactionManager#setFactionLeader failed: id == null");
-        assertThat(leader != null).isTrue().withFailMessage("FactionManager#setFactionLeader failed: leader == null");
+        assertThat(id).isNotNull().withFailMessage("FactionManager#setFactionLeader failed: id == null");
+        assertThat(leader).isNotNull().withFailMessage("FactionManager#setFactionLeader failed: leader == null");
 
         assertThat(factions).containsKey(id).withFailMessage("FactionManager#setFactionLeader failed: Faction with id: %s does not exist.", id);
 
@@ -142,8 +142,8 @@ public class FactionManager {
     }
 
     public Optional<FactionOption> getOption(UUID faction, Faction.Option key) {
-        assertThat(faction != null).isTrue().withFailMessage("FactionManager#getOption failed: faction == null");
-        assertThat(key != null).isTrue().withFailMessage("FactionManager#getOption failed: key == null");
+        assertThat(faction).isNotNull().withFailMessage("FactionManager#getOption failed: faction == null");
+        assertThat(key).isNotNull().withFailMessage("FactionManager#getOption failed: key == null");
 
         assertThat(factions).containsKey(faction).withFailMessage("FactionManager#getOption failed: faction with id %s does not exist", faction);
 
@@ -156,8 +156,8 @@ public class FactionManager {
     }
 
     public Optional<String> getOptionValue(UUID faction, Faction.Option key, Optional<String> defaultValue) {
-        assertThat(faction != null).isTrue().withFailMessage("FactionManager#getOptionValue failed: faction == null");
-        assertThat(key != null).isTrue().withFailMessage("FactionManager#getOptionValue failed: key == null");
+        assertThat(faction).isNotNull().withFailMessage("FactionManager#getOptionValue failed: faction == null");
+        assertThat(key).isNotNull().withFailMessage("FactionManager#getOptionValue failed: key == null");
 
         assertThat(factions).containsKey(faction).withFailMessage("FactionManager#getOptionValue failed: faction with id %s does not exist", faction);
         if(!options.containsKey(faction)) options.put(faction, new ArrayList<>());
@@ -168,9 +168,9 @@ public class FactionManager {
     }
 
     public void setOption(UUID faction, Faction.Option key, String value) {
-        assertThat(faction != null).isTrue().withFailMessage("FactionManager#setOption failed: faction == null");
-        assertThat(key != null).isTrue().withFailMessage("FactionManager#setOption failed: key == null");
-        assertThat(value != null).isTrue().withFailMessage("FactionManager#setOption failed: value == null");
+        assertThat(faction).isNotNull().withFailMessage("FactionManager#setOption failed: faction == null");
+        assertThat(key).isNotNull().withFailMessage("FactionManager#setOption failed: key == null");
+        assertThat(value).isNotNull().withFailMessage("FactionManager#setOption failed: value == null");
 
         assertThat(factions).containsKey(faction).withFailMessage("FactionManager#setOption failed: faction with id %s does not exist", faction);
         if(!options.containsKey(faction)) options.put(faction, new ArrayList<>());

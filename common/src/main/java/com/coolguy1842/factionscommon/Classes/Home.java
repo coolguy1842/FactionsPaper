@@ -29,7 +29,6 @@ public class Home {
     public UUID      getOwner    () { return owner; }
     public OwnerType getOwnerType() { return ownerType; }
 
-    public void setID       (UUID id)             { this.id        = id;        }
     public void setName     (String name)         { this.name      = name;      }
     public void setLocation (String location)     { this.location  = location;  }
     public void setOwner    (UUID owner)          { this.owner     = owner;     }

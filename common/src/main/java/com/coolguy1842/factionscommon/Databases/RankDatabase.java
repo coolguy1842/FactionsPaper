@@ -47,10 +47,10 @@ public class RankDatabase implements DatabaseHandler {
 
     
     public Optional<Rank> addRank(UUID id, UUID faction, String name, String permissions) {
-        assertThat(id != null).isTrue().withFailMessage("RankDatabase#addRank failed: id == null");
-        assertThat(faction != null).isTrue().withFailMessage("RankDatabase#addRank failed: faction == null");
-        assertThat(name != null).isTrue().withFailMessage("RankDatabase#addRank failed: name == null");
-        assertThat(permissions != null).isTrue().withFailMessage("RankDatabase#addRank failed: permissions == null");
+        assertThat(id).isNotNull().withFailMessage("RankDatabase#addRank failed: id == null");
+        assertThat(faction).isNotNull().withFailMessage("RankDatabase#addRank failed: faction == null");
+        assertThat(name).isNotNull().withFailMessage("RankDatabase#addRank failed: name == null");
+        assertThat(permissions).isNotNull().withFailMessage("RankDatabase#addRank failed: permissions == null");
 
         try {
             database.execute(
@@ -67,7 +67,7 @@ public class RankDatabase implements DatabaseHandler {
     }
 
     public Boolean removeRank(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("RankDatabase#removeRank failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("RankDatabase#removeRank failed: id == null");
 
         try {
             database.execute(
@@ -105,8 +105,8 @@ public class RankDatabase implements DatabaseHandler {
     }
     
     public Optional<Rank> getRank(UUID faction, String name) {
-        assertThat(faction != null).isTrue().withFailMessage("RankDatabase#getRank failed: faction == null");
-        assertThat(name != null).isTrue().withFailMessage("RankDatabase#getRank failed: name == null");
+        assertThat(faction).isNotNull().withFailMessage("RankDatabase#getRank failed: faction == null");
+        assertThat(name).isNotNull().withFailMessage("RankDatabase#getRank failed: name == null");
 
         try(CachedRowSet rows = database.query("SELECT id FROM ranks WHERE faction = ? AND name = ?", faction, name)) {
             if(rows == null || rows.size() <= 0) return Optional.empty();
@@ -122,7 +122,7 @@ public class RankDatabase implements DatabaseHandler {
     }
 
     public Optional<Rank> getRank(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("RankDatabase#getRank failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("RankDatabase#getRank failed: id == null");
 
         try (CachedRowSet rows = database.query("SELECT * FROM ranks WHERE id = ?", id)) {
             if(rows == null || rows.size() <= 0) return Optional.empty();

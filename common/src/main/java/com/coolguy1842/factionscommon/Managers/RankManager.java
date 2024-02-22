@@ -53,9 +53,9 @@ public class RankManager {
 
     
     public Rank addRank(UUID id, UUID faction, String name) {
-        assertThat(id != null).isTrue().withFailMessage("RankManager#addRank failed: id == null");
-        assertThat(faction != null).isTrue().withFailMessage("RankManager#addRank failed: faction == null");
-        assertThat(name != null).isTrue().withFailMessage("RankManager#addRank failed: name == null");
+        assertThat(id).isNotNull().withFailMessage("RankManager#addRank failed: id == null");
+        assertThat(faction).isNotNull().withFailMessage("RankManager#addRank failed: faction == null");
+        assertThat(name).isNotNull().withFailMessage("RankManager#addRank failed: name == null");
 
         Optional<Rank> rankOptional = database.addRank(id, faction, name, "");
         assertThat(rankOptional).isPresent().withFailMessage("RankManager#addRank failed: rank with id: %s, faction: %s, name: %s not created.", id, faction, name);
@@ -67,7 +67,7 @@ public class RankManager {
     }
     
     public void removeRank(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("RankManager#removeRank failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("RankManager#removeRank failed: id == null");
 
         assertThat(database.removeRank(id)).isTrue().withFailMessage("RankManager#removeRank failed: no rank with id: %s removed.", id);
         removeFromCache(ranks.get(id));
@@ -76,7 +76,7 @@ public class RankManager {
 
     public List<Rank> getRanks() { return ranksList; }
     public List<Rank> getRanksInFaction(UUID faction) {
-        assertThat(faction != null).isTrue().withFailMessage("RankManager#getRanksInFaction failed: faction == null");
+        assertThat(faction).isNotNull().withFailMessage("RankManager#getRanksInFaction failed: faction == null");
         return ranksList.stream().filter(x -> x.getFaction().equals(faction)).toList();
     }
 
@@ -91,8 +91,8 @@ public class RankManager {
     }
     
     public Optional<Rank> getRank(UUID faction, String name) {
-        assertThat(faction != null).isTrue().withFailMessage("RankManager#getRank failed: faction == null");
-        assertThat(name != null).isTrue().withFailMessage("RankManager#getRank failed: name == null");
+        assertThat(faction).isNotNull().withFailMessage("RankManager#getRank failed: faction == null");
+        assertThat(name).isNotNull().withFailMessage("RankManager#getRank failed: name == null");
         Pair<UUID, String> pair = Pair.of(faction, name);
 
         if(ranksByFactionAndName.containsKey(pair)) return Optional.of(ranksByFactionAndName.get(pair));
@@ -105,8 +105,8 @@ public class RankManager {
 
 
     public void setRankName(UUID id, String name) {
-        assertThat(id != null).isTrue().withFailMessage("RankManager#setRankName failed: id == null");
-        assertThat(name != null).isTrue().withFailMessage("RankManager#setRankName failed: name == null");
+        assertThat(id).isNotNull().withFailMessage("RankManager#setRankName failed: id == null");
+        assertThat(name).isNotNull().withFailMessage("RankManager#setRankName failed: name == null");
 
         assertThat(getRank(id)).isPresent().withFailMessage("RankManager#setRankName failed: Rank with UUID: %s does not exist.", id);
         
@@ -131,8 +131,8 @@ public class RankManager {
 
     // WILL NOT CHECK IF PERMISSIONS STRING IS VALID
     public void setRankPermissions(UUID id, String permissions) {
-        assertThat(id != null).isTrue().withFailMessage("RankManager#setRankPermissions failed: id == null");
-        assertThat(permissions != null).isTrue().withFailMessage("RankManager#setRankPermissions failed: permissions == null");
+        assertThat(id).isNotNull().withFailMessage("RankManager#setRankPermissions failed: id == null");
+        assertThat(permissions).isNotNull().withFailMessage("RankManager#setRankPermissions failed: permissions == null");
 
         assertThat(getRank(id)).isPresent().withFailMessage("RankManager#setRankPermissions failed: Rank with UUID: %s does not exist.", id);
         FactionsCommon.LOGGER.info("id: {}, permissions: {}", id, permissions);

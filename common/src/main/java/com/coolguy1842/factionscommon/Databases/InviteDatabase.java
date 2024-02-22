@@ -65,9 +65,9 @@ public class InviteDatabase implements DatabaseHandler {
 
 
     public Optional<Invite> addInvite(UUID inviter, UUID invited, InviteType type) {
-        assertThat(inviter != null).isTrue().withFailMessage("InviteDatabase#addInvite failed: inviter == null");
-        assertThat(invited != null).isTrue().withFailMessage("InviteDatabase#addInvite failed: invited == null");
-        assertThat(type != null).isTrue().withFailMessage("InviteDatabase#addInvite failed: type == null");
+        assertThat(inviter).isNotNull().withFailMessage("InviteDatabase#addInvite failed: inviter == null");
+        assertThat(invited).isNotNull().withFailMessage("InviteDatabase#addInvite failed: invited == null");
+        assertThat(type).isNotNull().withFailMessage("InviteDatabase#addInvite failed: type == null");
 
         try {
             database.execute(
@@ -85,7 +85,7 @@ public class InviteDatabase implements DatabaseHandler {
     
     
     public Boolean removeInviteWithInvited(UUID invited) {
-        assertThat(invited != null).isTrue().withFailMessage("InviteDatabase#removeInviteWithInvited failed: invited == null");
+        assertThat(invited).isNotNull().withFailMessage("InviteDatabase#removeInviteWithInvited failed: invited == null");
 
         try {
             database.execute("DELETE FROM invites WHERE invited = ?", invited);
@@ -98,7 +98,7 @@ public class InviteDatabase implements DatabaseHandler {
     }
     
     public Boolean removeInviteWithInviter(UUID inviter) {
-        assertThat(inviter != null).isTrue().withFailMessage("InviteDatabase#removeInviteWithInviter failed: inviter == null");
+        assertThat(inviter).isNotNull().withFailMessage("InviteDatabase#removeInviteWithInviter failed: inviter == null");
 
         try {
             database.execute("DELETE FROM invites WHERE inviter = ?", inviter);
@@ -111,8 +111,8 @@ public class InviteDatabase implements DatabaseHandler {
     }
     
     public Boolean removeInvite(UUID inviter, UUID invited) {
-        assertThat(inviter != null).isTrue().withFailMessage("InviteDatabase#addInvite failed: inviter == null");
-        assertThat(invited != null).isTrue().withFailMessage("InviteDatabase#addInvite failed: invited == null");
+        assertThat(inviter).isNotNull().withFailMessage("InviteDatabase#addInvite failed: inviter == null");
+        assertThat(invited).isNotNull().withFailMessage("InviteDatabase#addInvite failed: invited == null");
 
         try {
             database.execute("DELETE FROM invites WHERE inviter = ? AND invited = ?", inviter, invited);

@@ -1,4 +1,4 @@
-package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged;
+package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Home;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +15,8 @@ import org.incendo.cloud.processors.requirements.Requirements;
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
+import com.coolguy1842.factions.Suggestions.HomeNameSuggestion;
+import com.coolguy1842.factions.Suggestions.HomeNameSuggestion.ParserType;
 import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.LocationUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
@@ -40,7 +42,7 @@ public class FactionSetHomeCommand implements Subcommand {
             baseCommand.literal(getName())
                 .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
                 .permission(getPermission())
-                .optional("home", StringParser.stringParser())
+                .optional("home", StringParser.stringParser(), HomeNameSuggestion.homeNameSuggestion(ParserType.FACTION))
                     .handler(ctx -> runCommand(ctx))
         );
     }

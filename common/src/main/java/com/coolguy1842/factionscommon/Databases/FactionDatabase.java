@@ -46,15 +46,6 @@ public class FactionDatabase implements DatabaseHandler {
                     value TEXT NOT NULL
                 );  
             """);
-
-            database.execute("""
-                CREATE TABLE IF NOT EXISTS vaults (
-                    contents TEXT NOT NULL,
-                    faction CHAR(36) NOT NULL,
-                    id CHAR(36) PRIMARY KEY,
-                    name TEXT NOT NULL
-                );
-            """);
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -63,10 +54,10 @@ public class FactionDatabase implements DatabaseHandler {
 
 
     public Optional<Faction> addFaction(UUID id, String name, Long balance, UUID leader) {
-        assertThat(id != null).isTrue().withFailMessage("FactionDatabase#addFaction failed: id == null");
-        assertThat(name != null).isTrue().withFailMessage("FactionDatabase#addFaction failed: name == null");
-        assertThat(balance != null).isTrue().withFailMessage("FactionDatabase#addFaction failed: balance == null");
-        assertThat(leader != null).isTrue().withFailMessage("FactionDatabase#addFaction failed: leader == null");
+        assertThat(id).isNotNull().withFailMessage("FactionDatabase#addFaction failed: id == null");
+        assertThat(name).isNotNull().withFailMessage("FactionDatabase#addFaction failed: name == null");
+        assertThat(balance).isNotNull().withFailMessage("FactionDatabase#addFaction failed: balance == null");
+        assertThat(leader).isNotNull().withFailMessage("FactionDatabase#addFaction failed: leader == null");
 
         try {
             database.execute(
@@ -83,7 +74,7 @@ public class FactionDatabase implements DatabaseHandler {
     }
 
     public Boolean removeFaction(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("FactionDatabase#removeFaction failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("FactionDatabase#removeFaction failed: id == null");
 
         try {
             database.execute("DELETE FROM factions WHERE id = ?", id);
@@ -119,7 +110,7 @@ public class FactionDatabase implements DatabaseHandler {
     }
     
     public Optional<Faction> getFaction(String name) {
-        assertThat(name != null).isTrue().withFailMessage("FactionDatabase#getFaction failed: name == null");
+        assertThat(name).isNotNull().withFailMessage("FactionDatabase#getFaction failed: name == null");
 
         try(CachedRowSet rows = database.query("SELECT * FROM factions WHERE name = ?", name)) {
             if(rows == null || rows.size() <= 0) return Optional.empty();
@@ -135,7 +126,7 @@ public class FactionDatabase implements DatabaseHandler {
     }
 
     public Optional<Faction> getFaction(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("FactionDatabase#getFaction failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("FactionDatabase#getFaction failed: id == null");
 
         try(CachedRowSet rows = database.query("SELECT * FROM factions WHERE id = ?", id)) {
             if(rows == null || rows.size() <= 0) return Optional.empty();
@@ -158,24 +149,24 @@ public class FactionDatabase implements DatabaseHandler {
 
 
     public void setFactionName(UUID id, String name) {
-        assertThat(id != null).isTrue().withFailMessage("FactionDatabase#setFactionName failed: id == null");
-        assertThat(name != null).isTrue().withFailMessage("FactionDatabase#setFactionName failed: name == null");
+        assertThat(id).isNotNull().withFailMessage("FactionDatabase#setFactionName failed: id == null");
+        assertThat(name).isNotNull().withFailMessage("FactionDatabase#setFactionName failed: name == null");
 
         try { database.execute("UPDATE factions SET name = ? WHERE id = ?", name, id); }
         catch (SQLException e) { e.printStackTrace(); }
     }
 
     public void setFactionBalance(UUID id, Long balance) {
-        assertThat(id != null).isTrue().withFailMessage("FactionDatabase#setFactionBalance failed: id == null");
-        assertThat(balance != null).isTrue().withFailMessage("FactionDatabase#setFactionBalance failed: balance == null");
+        assertThat(id).isNotNull().withFailMessage("FactionDatabase#setFactionBalance failed: id == null");
+        assertThat(balance).isNotNull().withFailMessage("FactionDatabase#setFactionBalance failed: balance == null");
         
         try { database.execute("UPDATE factions SET balance = ? WHERE id = ?", balance, id); }
         catch (SQLException e) { e.printStackTrace(); }
     }
 
     public void setFactionLeader(UUID id, UUID leader) {
-        assertThat(id != null).isTrue().withFailMessage("FactionDatabase#setFactionLeader failed: id == null");
-        assertThat(leader != null).isTrue().withFailMessage("FactionDatabase#setFactionLeader failed: leader == null");
+        assertThat(id).isNotNull().withFailMessage("FactionDatabase#setFactionLeader failed: id == null");
+        assertThat(leader).isNotNull().withFailMessage("FactionDatabase#setFactionLeader failed: leader == null");
         
         try { database.execute("UPDATE factions SET leader = ? WHERE id = ?", leader, id); }
         catch (SQLException e) { e.printStackTrace(); }
@@ -206,7 +197,7 @@ public class FactionDatabase implements DatabaseHandler {
 
     public List<FactionOption> getOptions(UUID faction) {
         List<FactionOption> out = new ArrayList<>();
-        assertThat(faction != null).isTrue().withFailMessage("FactionDatabase#getOptions failed: faction == null");
+        assertThat(faction).isNotNull().withFailMessage("FactionDatabase#getOptions failed: faction == null");
 
         try(CachedRowSet rows = database.query("SELECT * FROM options WHERE faction = ?", faction)) {
             if(rows == null || rows.size() <= 0) return out;
@@ -227,8 +218,8 @@ public class FactionDatabase implements DatabaseHandler {
     }
     
     public Optional<FactionOption> getOption(UUID faction, Faction.Option key) {
-        assertThat(faction != null).isTrue().withFailMessage("FactionDatabase#getOption failed: faction == null");
-        assertThat(key != null).isTrue().withFailMessage("FactionDatabase#getOption failed: key == null");
+        assertThat(faction).isNotNull().withFailMessage("FactionDatabase#getOption failed: faction == null");
+        assertThat(key).isNotNull().withFailMessage("FactionDatabase#getOption failed: key == null");
 
         try(CachedRowSet rows = database.query("SELECT * FROM options WHERE faction = ? AND key = ?", faction, key.name())) {
             if(rows == null || rows.size() <= 0) return Optional.empty();

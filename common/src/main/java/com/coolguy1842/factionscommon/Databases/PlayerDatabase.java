@@ -43,8 +43,8 @@ public class PlayerDatabase implements DatabaseHandler {
     }
 
     public Optional<FactionPlayer> addPlayer(UUID id, Long balance, UUID faction, UUID rank) {
-        assertThat(id != null).isTrue().withFailMessage("PlayerDatabase#addPlayer failed: id == null");
-        assertThat(balance != null).isTrue().withFailMessage("PlayerDatabase#addPlayer failed: balance == null");
+        assertThat(id).isNotNull().withFailMessage("PlayerDatabase#addPlayer failed: id == null");
+        assertThat(balance).isNotNull().withFailMessage("PlayerDatabase#addPlayer failed: balance == null");
 
         try {
             database.execute(
@@ -82,7 +82,7 @@ public class PlayerDatabase implements DatabaseHandler {
     }
     
     public Optional<FactionPlayer> getPlayer(UUID id) {
-        assertThat(id != null).isTrue().withFailMessage("PlayerDatabase#getPlayer failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("PlayerDatabase#getPlayer failed: id == null");
 
         try (CachedRowSet rows = database.query("SELECT * FROM players WHERE id = ?", id)) {
             if(rows == null || rows.size() <= 0) return Optional.empty();
@@ -108,22 +108,22 @@ public class PlayerDatabase implements DatabaseHandler {
     }
 
     public void setPlayerBalance(UUID id, Long balance) {
-        assertThat(id != null).isTrue().withFailMessage("PlayerDatabase#setPlayerBalance failed: id == null");
-        assertThat(balance != null).isTrue().withFailMessage("PlayerDatabase#setPlayerBalance failed: balance == null");
+        assertThat(id).isNotNull().withFailMessage("PlayerDatabase#setPlayerBalance failed: id == null");
+        assertThat(balance).isNotNull().withFailMessage("PlayerDatabase#setPlayerBalance failed: balance == null");
 
         try { database.execute("UPDATE players SET balance = ? WHERE id = ?", balance, id); }
         catch (SQLException e) { e.printStackTrace(); }
     }
 
     public void setPlayerFaction(UUID id, UUID faction) {
-        assertThat(id != null).isTrue().withFailMessage("PlayerDatabase#setPlayerFaction failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("PlayerDatabase#setPlayerFaction failed: id == null");
         
         try { database.execute("UPDATE players SET faction = ? WHERE id = ?", faction, id); }
         catch (SQLException e) { e.printStackTrace(); }
     }
 
     public void setPlayerRank(UUID id, UUID rank) {
-        assertThat(id != null).isTrue().withFailMessage("PlayerDatabase#setPlayerRank failed: id == null");
+        assertThat(id).isNotNull().withFailMessage("PlayerDatabase#setPlayerRank failed: id == null");
         
         try { database.execute("UPDATE players SET rank = ? WHERE id = ?", rank, id); }
         catch (SQLException e) { e.printStackTrace(); }
