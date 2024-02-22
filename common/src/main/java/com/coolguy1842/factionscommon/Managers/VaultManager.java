@@ -77,7 +77,7 @@ public class VaultManager {
         assertThat(contents).isNotNull().withFailMessage("VaultManager#addVault failed: contents == null");
         
         Optional<Vault> vaultOptional = database.addVault(id, faction, name, contents);
-        assertThat(vaultOptional).isPresent().withFailMessage("VaultManager#addVault failed: home with id: %s, faction: %s, name: %s not created.", id, faction, name);
+        assertThat(vaultOptional).isPresent().withFailMessage("VaultManager#addVault failed: vault with id: %s, faction: %s, name: %s not created.", id, faction, name);
         
         Vault vault = vaultOptional.get();
         addToCache(vault);
@@ -103,17 +103,17 @@ public class VaultManager {
 
 
     public void setVaultName(UUID id, String name) {
-        assertThat(id).isNotNull().withFailMessage("VaultManager#removeHome failed: id == null");
-        assertThat(name).isNotNull().withFailMessage("VaultManager#removeHome failed: name == null");
+        assertThat(id).isNotNull().withFailMessage("VaultManager#setVaultName failed: id == null");
+        assertThat(name).isNotNull().withFailMessage("VaultManager#setVaultName failed: name == null");
 
-        assertThat(vaults).containsKey(id).withFailMessage("VaultManager#set failed: vault with id: %s doesn't exist.", id);
+        assertThat(vaults).containsKey(id).withFailMessage("VaultManager#setVaultName failed: vault with id: %s doesn't exist.", id);
         Vault vault = vaults.get(id);
 
         vault.setName(name);
         database.setVaultName(id, name);
     }
     
-    public void setHomeName(UUID faction, String currentName, String newName) {
+    public void setVaultName(UUID faction, String currentName, String newName) {
         assertThat(faction).isNotNull().withFailMessage("VaultManager#setVaultName failed: faction == null");
         assertThat(currentName).isNotNull().withFailMessage("VaultManager#setVaultName failed: currentName == null");
         assertThat(newName).isNotNull().withFailMessage("VaultManager#setVaultName failed: newName == null");
@@ -126,7 +126,7 @@ public class VaultManager {
 
     public void setVaultContents(UUID id, String contents) {
         assertThat(id).isNotNull().withFailMessage("VaultManager#setVaultContents failed: id == null.", id);
-        assertThat(contents).isNotNull().withFailMessage("VaultManager#setHomeLocation failed: contents == null.", id);
+        assertThat(contents).isNotNull().withFailMessage("VaultManager#setVaultContents failed: contents == null.", id);
 
         assertThat(vaults).containsKey(id).withFailMessage("VaultManager#setVaultContents failed: vault with id: %s does not exist.", id);
         

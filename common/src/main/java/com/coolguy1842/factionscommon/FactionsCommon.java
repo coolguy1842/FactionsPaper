@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.coolguy1842.factionscommon.Managers.ClaimManager;
 import com.coolguy1842.factionscommon.Managers.FactionManager;
 import com.coolguy1842.factionscommon.Managers.HomeManager;
 import com.coolguy1842.factionscommon.Managers.InviteManager;
@@ -24,6 +25,7 @@ public class FactionsCommon {
     public InviteManager inviteManager;
     public HomeManager homeManager;
     public VaultManager vaultManager;
+    public ClaimManager claimManager;
 
  
     public FactionsCommon(Path configPath) {
@@ -44,6 +46,7 @@ public class FactionsCommon {
         if(inviteManager  != null) inviteManager .close();
         if(homeManager    != null) homeManager   .close();
         if(vaultManager   != null) vaultManager  .close();
+        if(claimManager   != null) claimManager  .close();
 
         factionManager = new FactionManager(configPath);
         playerManager  = new PlayerManager (configPath);
@@ -51,6 +54,7 @@ public class FactionsCommon {
         inviteManager  = new InviteManager (configPath);
         homeManager    = new HomeManager   (configPath);
         vaultManager   = new VaultManager  (configPath);
+        claimManager   = new ClaimManager  (configPath);
 
         LOGGER.info("Started");
     }
@@ -59,6 +63,7 @@ public class FactionsCommon {
     public void close() {
         LOGGER.info("Stopping...");
 
+        claimManager  .close();
         vaultManager  .close();
         homeManager   .close();
         inviteManager .close();
@@ -66,6 +71,7 @@ public class FactionsCommon {
         playerManager .close();
         factionManager.close();
         
+        claimManager   = null;
         vaultManager   = null;
         homeManager    = null;
         inviteManager  = null;

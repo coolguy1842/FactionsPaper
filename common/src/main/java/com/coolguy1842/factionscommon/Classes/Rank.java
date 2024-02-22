@@ -14,7 +14,9 @@ public class Rank {
         DEL_HOME,
         CREATE_VAULT,
         REMOVE_VAULT,
-        OPEN_VAULT
+        OPEN_VAULT,
+        CLAIM,
+        UNCLAIM
     };
 
     private UUID id;

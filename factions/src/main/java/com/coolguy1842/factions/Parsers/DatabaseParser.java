@@ -28,6 +28,7 @@ public class DatabaseParser<C> implements ArgumentParser<C, DatabaseHandler>, Bl
         case "invites": return ArgumentParseResult.success(Factions.getFactionsCommon().inviteManager.database);
         case "homes": return ArgumentParseResult.success(Factions.getFactionsCommon().homeManager.database);
         case "vaults": return ArgumentParseResult.success(Factions.getFactionsCommon().vaultManager.database);
+        case "claims": return ArgumentParseResult.success(Factions.getFactionsCommon().claimManager.database);
         default: return ArgumentParseResult.failure(new DatabaseParseException(ParserCaptions.Keys.Database.INVALID, input, ctx));
         }
     }
@@ -40,7 +41,8 @@ public class DatabaseParser<C> implements ArgumentParser<C, DatabaseHandler>, Bl
             Suggestion.simple("ranks"),
             Suggestion.simple("invites"),
             Suggestion.simple("homes"),
-            Suggestion.simple("vaults")
+            Suggestion.simple("vaults"),
+            Suggestion.simple("claims")
         );
     }
 

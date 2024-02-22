@@ -21,6 +21,12 @@ public class VaultUtil {
 
 
     public static void resetVaultInventories() {
+        if(vaultInventories != null) {
+            for(Inventory inventory : vaultInventories.values()) {
+                inventory.close();
+            }
+        }
+
         vaultInventories = new HashMap<>(); 
         inventoryToVault = new HashMap<>();
     }

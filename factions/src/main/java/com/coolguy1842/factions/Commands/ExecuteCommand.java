@@ -12,6 +12,7 @@ import org.incendo.cloud.permission.Permission;
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Parsers.DatabaseParser;
 import com.coolguy1842.factions.Util.PlayerUtil;
+import com.coolguy1842.factions.Util.VaultUtil;
 import com.coolguy1842.factionscommon.Databases.DatabaseHandler;
 
 public class ExecuteCommand {
@@ -47,14 +48,18 @@ public class ExecuteCommand {
                 case "ranks": Factions.getFactionsCommon().rankManager.reload(); break;
                 case "invites": Factions.getFactionsCommon().inviteManager.reload(); break;
                 case "homes": Factions.getFactionsCommon().homeManager.reload(); break;
-                case "vaults": Factions.getFactionsCommon().vaultManager.reload(); break;
+                case "vaults":
+                    Factions.getFactionsCommon().vaultManager.reload();
+                    VaultUtil.resetVaultInventories();
+                    break;
+                case "claims": Factions.getFactionsCommon().claimManager.reload(); break;
                 default: break;
             }
             
             sender.sendMessage("Executed statement successfully!");
         } catch (SQLException e) {
             e.printStackTrace();
-            sender.sendMessage("Error querying db! Check console.");
+            sender.sendMessage("Error executing statement in db! Check console.");
             
             return;
         }

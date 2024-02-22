@@ -35,7 +35,7 @@ public class InviteDatabase implements DatabaseHandler {
                     invited CHAR(36) NOT NULL,
                     inviter CHAR(36) NOT NULL,
                     type TEXT NOT NULL
-                );                  
+                );
             """);
         }
         catch (SQLException e) {
