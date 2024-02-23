@@ -34,17 +34,13 @@ public class FactionDelHomeCommand implements Subcommand {
     public class Requirement implements Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
-                Map.entry("noHome", Component.text("No default home exists!")),
-                Map.entry("error", Component.text("Error"))
+                Map.entry("noHome", Component.text("No default home exists!"))
             );
         }
 
         @Override
         public @NonNull Component errorMessage(final @NonNull CommandContext<CommandSender> ctx) {
-            Home home = ctx.getOrDefault("home", null);
-
-            if(home == null) return getErrorMessages().get("noHome");
-            return getErrorMessages().get("error");
+            return getErrorMessages().get("noHome");
         }
 
         @Override
@@ -52,9 +48,7 @@ public class FactionDelHomeCommand implements Subcommand {
             Player player = (Player)ctx.sender();
             FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
 
-            Home home = ctx.getOrDefault("home", null);
-            
-            if(home == null) {
+            if(ctx.getOrDefault("home", null) == null) {
                 if(!Factions.getFactionsCommon().homeManager.getHome(factionPlayer.getFaction(), "home").isPresent()) {
                     return false;
                 }
@@ -91,6 +85,7 @@ public class FactionDelHomeCommand implements Subcommand {
             home = defaultHome.get();
         }
 
+        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() + FactionSetHomeCommand.homeFee);
         Factions.getFactionsCommon().homeManager.removeHome(home.getID());
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),

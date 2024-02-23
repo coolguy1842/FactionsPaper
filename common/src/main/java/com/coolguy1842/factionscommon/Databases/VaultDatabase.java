@@ -16,7 +16,7 @@ import com.coolguy1842.factionscommon.Classes.Database;
 import com.coolguy1842.factionscommon.Classes.Vault;
 
 public class VaultDatabase implements DatabaseHandler {
-    @Override public String getName() { return "vault"; }
+    @Override public String getName() { return "vaults"; }
 
     private Database database;
     @Override public Database getDatabase() { return database; }

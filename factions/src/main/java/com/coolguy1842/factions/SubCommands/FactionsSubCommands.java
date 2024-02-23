@@ -6,6 +6,7 @@ import com.coolguy1842.factions.SubCommands.Faction.All.FactionsHelpCommand;
 import com.coolguy1842.factions.SubCommands.Faction.NoFaction.FactionAcceptCommand;
 import com.coolguy1842.factions.SubCommands.Faction.NoFaction.FactionCreateCommand;
 import com.coolguy1842.factions.SubCommands.Faction.NoFaction.FactionRejectCommand;
+import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionBalanceCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionHomeCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionLeaveCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.FactionInviteCommand;
@@ -35,7 +36,8 @@ public class FactionsSubCommands {
         HOME,
         VAULT,
         CLAIM,
-        UNCLAIM
+        UNCLAIM,
+        BALANCE
     }
 
     public static final List<Subcommand> subcommands = List.of(
@@ -53,6 +55,7 @@ public class FactionsSubCommands {
         new FactionHomeCommand   (),
         new FactionVaultCommand  (),
         new FactionClaimCommand  (),
-        new FactionUnclaimCommand()
+        new FactionUnclaimCommand(),
+        new FactionBalanceCommand()
     );
 }

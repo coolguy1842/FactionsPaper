@@ -33,7 +33,7 @@ public class FactionUnclaimCommand implements Subcommand {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
                 Map.entry("notClaimed", Component.text("This chunk is not claimed!")),
-                Map.entry("claimedByOther", Component.text("This chunk is claimed by another faction!"))
+                Map.entry("claimedByOthers", Component.text("This chunk is claimed by another faction!"))
             );
         }
 
@@ -84,6 +84,8 @@ public class FactionUnclaimCommand implements Subcommand {
         Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
 
         Factions.getFactionsCommon().claimManager.removeClaim(player.getWorld().getUID(), player.getChunk().getChunkKey());
+        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() + FactionClaimCommand.claimFee);
+
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
             MessageUtil.format("{} {} has unclaimed a chunk!", Factions.getPrefix(), player.displayName())

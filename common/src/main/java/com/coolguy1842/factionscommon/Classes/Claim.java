@@ -1,6 +1,5 @@
 package com.coolguy1842.factionscommon.Classes;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class Claim {
@@ -27,10 +26,10 @@ public class Claim {
     
     public void setWorld   (UUID world) { this.world    = world;    }
     public void setChunkKey(Long chunkKey)     { this.chunkKey = chunkKey; }
-    public Integer getLocationHash() { return Objects.hash(world, chunkKey); }
+    public String getLocationStr() { return Claim.getLocationStr(world, chunkKey); }
 
 
-    public static Integer getLocationHash(UUID worldID, Long chunkKey) {
-        return Objects.hash(worldID, chunkKey);
+    public static String getLocationStr(UUID worldID, Long chunkKey) {
+        return String.format("%s:%d", worldID.toString(), chunkKey);
     }
 }

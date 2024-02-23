@@ -77,4 +77,9 @@ public class FactionUtil {
             }
         }
     }
+
+
+    public static Component getFactionDisplayName(Faction faction) {
+        return Component.text(faction.getName());
+    }
 }

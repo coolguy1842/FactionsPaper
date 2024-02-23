@@ -17,9 +17,12 @@ import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
+import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factions.Util.VaultUtil;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
 import com.coolguy1842.factionscommon.Classes.Vault;
+import com.coolguy1842.factionscommon.Classes.Faction;
+import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 
 import net.kyori.adventure.text.Component;
@@ -43,6 +46,8 @@ public class FactionRemoveVaultCommand implements VaultSubcommand {
     @Override
     public void runCommand(CommandContext<CommandSender> ctx) {
         Player player = (Player)ctx.sender();
+        FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+        Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
         
         Vault vault = ctx.get("vault");
         Inventory vaultInventory = VaultUtil.getVaultInventory(vault);
@@ -53,6 +58,7 @@ public class FactionRemoveVaultCommand implements VaultSubcommand {
         }
 
         VaultUtil.removeVaultInventory(vault);
+        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() + FactionCreateVaultCommand.vaultFee);
         Factions.getFactionsCommon().vaultManager.removeVault(vault.getID());
 
         FactionUtil.broadcast(

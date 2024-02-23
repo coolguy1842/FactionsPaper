@@ -29,16 +29,28 @@ import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 import net.kyori.adventure.text.Component;
 
 public class FactionCreateVaultCommand implements VaultSubcommand {
+    public static final Long vaultFee = 250L;
+
     public class Requirement implements Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
-                Map.entry("vaultExists", Component.text("A vault named {} already exists!"))
+                Map.entry("vaultExists", Component.text("A vault named {} already exists!")),
+                Map.entry("lowBalance", Component.text(String.format("Your faction doesn't have enough money! {}/%d", vaultFee)))
             );
         }
 
         @Override
         public @NonNull Component errorMessage(final @NonNull CommandContext<CommandSender> ctx) {
-            return MessageUtil.format(getErrorMessages().get("vaultExists"), Component.text((String)ctx.get("name")));
+            Player player = (Player)ctx.sender();
+            FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+            Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
+    
+            String vaultName = ctx.get("name");
+            if(Factions.getFactionsCommon().vaultManager.getVault(faction.getID(), vaultName).isPresent()) {
+                return MessageUtil.format(getErrorMessages().get("vaultExists"), Component.text((String)ctx.get("name")));
+            }
+
+            return MessageUtil.format(getErrorMessages().get("lowBalance"), Component.text(faction.getBalance().toString()));
         }
 
         @Override
@@ -47,8 +59,12 @@ public class FactionCreateVaultCommand implements VaultSubcommand {
             FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
             Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
     
-            String vaultName = ctx.get("name");
-            return !Factions.getFactionsCommon().vaultManager.getVault(faction.getID(), vaultName).isPresent();
+            String vaultName = ctx.getOrDefault("name", "vault");
+            if(Factions.getFactionsCommon().vaultManager.getVault(faction.getID(), vaultName).isPresent()) {
+                return false;
+            }
+
+            return faction.getBalance() >= vaultFee;
         }
     }
 
@@ -61,7 +77,7 @@ public class FactionCreateVaultCommand implements VaultSubcommand {
             baseCommand.literal("create")
                 .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement(), new Requirement()))
                 .permission(getPermission())
-                .required("name", StringParser.stringParser())
+                .optional("name", StringParser.stringParser())
                     .handler(ctx -> runCommand(ctx))
         );
     }
@@ -72,9 +88,10 @@ public class FactionCreateVaultCommand implements VaultSubcommand {
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
         Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
 
-        String vaultName = ctx.get("name");
+        String vaultName = ctx.getOrDefault("name", "vault");
+        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() - vaultFee);
         Factions.getFactionsCommon().vaultManager.addVault(UUID.randomUUID(), faction.getID(), vaultName, VaultUtil.serializeInventory(VaultUtil.newVaultInventory(vaultName)));
-    
+
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
             MessageUtil.format("{} {} has created a new vault named {}!", Factions.getPrefix(), player.displayName(), Component.text(vaultName))

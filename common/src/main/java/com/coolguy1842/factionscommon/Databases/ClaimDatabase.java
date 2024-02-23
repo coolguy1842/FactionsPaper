@@ -16,7 +16,7 @@ import com.coolguy1842.factionscommon.Classes.Claim;
 import com.coolguy1842.factionscommon.Classes.Database;
 
 public class ClaimDatabase implements DatabaseHandler {
-    @Override public String getName() { return "claim"; }
+    @Override public String getName() { return "claims"; }
 
     private Database database;
     @Override public Database getDatabase() { return database; }

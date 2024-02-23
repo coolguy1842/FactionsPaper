@@ -17,11 +17,11 @@ public class ClaimManager {
     public ClaimDatabase database;
     private Map<UUID, Claim> claims;
     private Map<UUID, List<Claim>> claimsInFactions;
-    private Map<Integer, Claim> claimsByLocationHash;
+    private Map<String, Claim> claimsByLocationHash;
     
     void addToCache(Claim claim) {
         claims.put(claim.getID(), claim);
-        claimsByLocationHash.put(claim.getLocationHash(), claim);
+        claimsByLocationHash.put(claim.getLocationStr(), claim);
 
         if(!claimsInFactions.containsKey(claim.getFaction())) claimsInFactions.put(claim.getFaction(), new ArrayList<>());
         claimsInFactions.get(claim.getFaction()).add(claim);
@@ -29,7 +29,7 @@ public class ClaimManager {
     
     void removeFromCache(Claim claim) {
         claims.remove(claim.getID());
-        claimsByLocationHash.remove(claim.getLocationHash());
+        claimsByLocationHash.remove(claim.getLocationStr());
 
         if(!claims.containsKey(claim.getFaction())) return;
         if(!claimsInFactions.get(claim.getFaction()).contains(claim)) return;
@@ -43,7 +43,7 @@ public class ClaimManager {
         reload();
     }
 
-    private void loadVaults() {
+    private void loadClaims() {
         for(Claim claim : database.getClaims()) {
             addToCache(claim);
         }
@@ -69,9 +69,9 @@ public class ClaimManager {
         assertThat(world).isNotNull().withFailMessage("ClaimManager#getClaim failed: world == null");
         assertThat(chunkKey).isNotNull().withFailMessage("ClaimManager#getClaim failed: chunkKey == null");
 
-        Integer locationHash = Claim.getLocationHash(world, chunkKey);
-        if(!claimsByLocationHash.containsKey(locationHash)) return Optional.empty();
-        return Optional.of(claimsByLocationHash.get(locationHash));
+        String locationString = Claim.getLocationStr(world, chunkKey);
+        if(!claimsByLocationHash.containsKey(locationString)) return Optional.empty();
+        return Optional.of(claimsByLocationHash.get(locationString));
     }
 
     public Claim addClaim(UUID id, UUID faction, UUID world, Long chunkKey) {
@@ -119,15 +119,15 @@ public class ClaimManager {
         assertThat(claims).containsKey(id).withFailMessage("ClaimManager#setClaimLocation failed: claim with id: %s doesn't exist.", id);
         Claim claim = claims.get(id);
 
-        Integer oldLocationHash = claim.getLocationHash();
+        String oldLocationStr = claim.getLocationStr();
         claim.setWorld(world);
         claim.setChunkKey(chunkKey);
 
         database.setClaimWorld(id, world);
         database.setClaimChunkKey(id, chunkKey);
         
-        claimsByLocationHash.remove(oldLocationHash);
-        claimsByLocationHash.put(claim.getLocationHash(), claim);
+        claimsByLocationHash.remove(oldLocationStr);
+        claimsByLocationHash.put(claim.getLocationStr(), claim);
     }
     
     public void setClaimLocation(UUID currentWorld, Long currentChunkKey, UUID world, Long chunkKey) {
@@ -142,11 +142,11 @@ public class ClaimManager {
         
         Claim claim = claimOptional.get();
 
-        Integer oldLocationHash = claim.getLocationHash();
+        String oldLocationString = claim.getLocationStr();
         setClaimLocation(claim.getID(), world, chunkKey);
         
-        claimsByLocationHash.remove(oldLocationHash);
-        claimsByLocationHash.put(claim.getLocationHash(), claim);
+        claimsByLocationHash.remove(oldLocationString);
+        claimsByLocationHash.put(claim.getLocationStr(), claim);
     }
 
 
@@ -155,7 +155,7 @@ public class ClaimManager {
         claimsByLocationHash = new HashMap<>();
         claimsInFactions = new HashMap<>();
 
-        loadVaults();
+        loadClaims();
     }
 
     public void close() {

@@ -28,21 +28,38 @@ import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 import net.kyori.adventure.text.Component;
 
 public class FactionClaimCommand implements Subcommand {
+    public static final Long claimFee = 10L;
+
     public class Requirement implements Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
-                Map.entry("alreadyClaimed", Component.text("This chunk is already claimed!"))
+                Map.entry("alreadyClaimed", Component.text("This chunk is already claimed!")),
+                Map.entry("lowBalance", Component.text(String.format("Your faction doesn't have enough money! {}/%d", claimFee)))
             );
         }
 
         @Override
         public @NonNull Component errorMessage(final @NonNull CommandContext<CommandSender> ctx) {
+            Player player = (Player)ctx.sender();
+            FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+            Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
+            
+            if(faction.getBalance() < claimFee) {
+                return MessageUtil.format(getErrorMessages().get("lowBalance"), Component.text(faction.getBalance().toString()));
+            }
+
             return getErrorMessages().get("alreadyClaimed");
         }
 
         @Override
         public boolean evaluateRequirement(final @NonNull CommandContext<CommandSender> ctx) {
             Player player = (Player)ctx.sender();
+            FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+            Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
+
+            if(faction.getBalance() < claimFee) {
+                return false;
+            }
             
             return !Factions.getFactionsCommon().claimManager.getClaim(player.getWorld().getUID(), player.getChunk().getChunkKey()).isPresent();
         }
@@ -71,6 +88,8 @@ public class FactionClaimCommand implements Subcommand {
         Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
 
         Factions.getFactionsCommon().claimManager.addClaim(UUID.randomUUID(), faction.getID(), player.getWorld().getUID(), player.getChunk().getChunkKey());
+        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() - claimFee);
+
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
             MessageUtil.format("{} {} has claimed a chunk!", Factions.getPrefix(), player.displayName())
