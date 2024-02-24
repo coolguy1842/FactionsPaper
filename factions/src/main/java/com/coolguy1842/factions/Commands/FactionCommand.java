@@ -4,8 +4,8 @@ import org.bukkit.command.CommandSender;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.Command.Builder;
 
+import com.coolguy1842.factions.Interfaces.Subcommand;
 import com.coolguy1842.factions.SubCommands.FactionsSubCommands;
-import com.coolguy1842.factions.interfaces.Subcommand;
 
 public class FactionCommand {
     public static void register(CommandManager<CommandSender> commandManager) {

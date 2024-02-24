@@ -8,9 +8,9 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.processors.requirements.Requirements;
 
+import com.coolguy1842.factions.Interfaces.Subcommand;
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
-import com.coolguy1842.factions.interfaces.Subcommand;
 
 public class FactionsHelpCommand implements Subcommand {
     @Override public String getName() { return "help"; }

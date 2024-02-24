@@ -1,4 +1,4 @@
-package com.coolguy1842.factions.interfaces;
+package com.coolguy1842.factions.Interfaces;
 
 import java.util.List;
 

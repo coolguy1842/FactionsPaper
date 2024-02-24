@@ -19,6 +19,7 @@ import org.incendo.cloud.paper.PaperCommandManager;
 import com.coolguy1842.factions.Commands.ExecuteCommand;
 import com.coolguy1842.factions.Commands.FactionCommand;
 import com.coolguy1842.factions.Commands.QueryCommand;
+import com.coolguy1842.factions.Commands.Sell.SellCommand;
 import com.coolguy1842.factions.Events.Inventory.OnInventoryClose;
 import com.coolguy1842.factions.Events.Inventory.OnInventoryInteract;
 import com.coolguy1842.factions.Events.Player.OnPlayerChat;
@@ -72,6 +73,8 @@ public class Factions extends JavaPlugin {
         
         QueryCommand.register(commandManager);
         ExecuteCommand.register(commandManager);
+
+        SellCommand.register(commandManager);
     }
 
     private void registerCaptions() {        

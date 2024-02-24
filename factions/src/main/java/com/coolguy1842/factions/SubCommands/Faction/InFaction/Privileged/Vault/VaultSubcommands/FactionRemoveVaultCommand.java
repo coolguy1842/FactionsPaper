@@ -57,8 +57,16 @@ public class FactionRemoveVaultCommand implements VaultSubcommand {
             player.getWorld().dropItemNaturally(player.getLocation(), item);
         }
 
+        
+        int numVaults = Factions.getFactionsCommon().vaultManager.getVaultsInFaction(faction.getID()).size();
+        if(numVaults > 1) {
+            Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() + FactionCreateVaultCommand.vaultFee);
+        }
+        else {
+            Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() + FactionCreateVaultCommand.firstVaultFee);
+        }
+
         VaultUtil.removeVaultInventory(vault);
-        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() + FactionCreateVaultCommand.vaultFee);
         Factions.getFactionsCommon().vaultManager.removeVault(vault.getID());
 
         FactionUtil.broadcast(

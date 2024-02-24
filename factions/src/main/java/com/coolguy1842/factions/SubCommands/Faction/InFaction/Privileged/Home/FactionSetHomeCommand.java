@@ -15,6 +15,7 @@ import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.processors.requirements.Requirements;
 
 import com.coolguy1842.factions.Factions;
+import com.coolguy1842.factions.Interfaces.Subcommand;
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement.Interface;
@@ -25,7 +26,6 @@ import com.coolguy1842.factions.Util.LocationUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
-import com.coolguy1842.factions.interfaces.Subcommand;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 import com.coolguy1842.factionscommon.Classes.Home;
@@ -35,7 +35,7 @@ import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 import net.kyori.adventure.text.Component;
 
 public class FactionSetHomeCommand implements Subcommand {
-    public static final Long homeFee = 250L;
+    public static final Long homeFee = 500L;
 
     public class Requirement implements Interface {
         public Map<String, Component> getErrorMessages() {
@@ -62,7 +62,8 @@ public class FactionSetHomeCommand implements Subcommand {
             String homeName = ctx.getOrDefault("home", "home");
             Optional<Home> homeOptional = Factions.getFactionsCommon().homeManager.getHome(faction.getID(), homeName);
             
-            if(faction.getBalance() < homeFee && !homeOptional.isPresent()) {
+            int numHomes = Factions.getFactionsCommon().homeManager.getHomesWithOwner(faction.getID()).size();
+            if(numHomes > 0 && faction.getBalance() < homeFee && !homeOptional.isPresent()) {
                 return false;
             }
             
@@ -105,7 +106,11 @@ public class FactionSetHomeCommand implements Subcommand {
             return;
         }
 
-        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() - homeFee);
+        int numHomes = Factions.getFactionsCommon().homeManager.getHomesWithOwner(faction.getID()).size();
+        if(numHomes > 0) {
+            Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() - homeFee);
+        }
+
         Factions.getFactionsCommon().homeManager.addHome(
             UUID.randomUUID(), homeName,
             LocationUtil.serializeLocation(player.getLocation()),

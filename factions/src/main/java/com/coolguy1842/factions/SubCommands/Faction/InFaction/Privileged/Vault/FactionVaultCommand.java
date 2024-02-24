@@ -9,6 +9,7 @@ import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.processors.requirements.Requirements;
 
+import com.coolguy1842.factions.Interfaces.Subcommand;
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Vault.VaultSubcommands.FactionCreateVaultCommand;
@@ -16,7 +17,6 @@ import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Vault.V
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Vault.VaultSubcommands.FactionRemoveVaultCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Vault.VaultSubcommands.VaultSubcommand;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
-import com.coolguy1842.factions.interfaces.Subcommand;
 
 public class FactionVaultCommand implements Subcommand {
     @Override public String getName() { return "vault"; }

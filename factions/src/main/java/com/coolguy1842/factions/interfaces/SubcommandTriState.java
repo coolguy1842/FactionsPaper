@@ -1,4 +1,4 @@
-package com.coolguy1842.factions.interfaces;
+package com.coolguy1842.factions.Interfaces;
 
 public enum SubcommandTriState {
     ANY,
