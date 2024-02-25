@@ -12,6 +12,7 @@ import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionHomeCommand
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionLeaveCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.FactionInviteCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.FactionKickCommand;
+import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Bank.FactionBankCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Claim.FactionClaimCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Claim.FactionUnclaimCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Home.FactionDelHomeCommand;
@@ -56,6 +57,7 @@ public class FactionsSubCommands {
         new FactionVaultCommand  (),
         new FactionClaimCommand  (),
         new FactionUnclaimCommand(),
-        new FactionBalanceCommand()
+        new FactionBalanceCommand(),
+        new FactionBankCommand   ()
     );
 }

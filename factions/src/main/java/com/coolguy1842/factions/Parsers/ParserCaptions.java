@@ -75,6 +75,14 @@ public class ParserCaptions {
             public static final String NO_FACTION_KEY = "argument.parse.failure.vault.no.faction";
             public static final Caption NO_FACTION = Caption.of(NO_FACTION_KEY);
         }
+        
+        public static final class Balance {
+            public static final String INVALID_KEY = "argument.parse.failure.balance.invalid";
+            public static final Caption INVALID = Caption.of(INVALID_KEY);
+            
+            public static final String NO_FACTION_KEY = "argument.parse.failure.balance.no.faction";
+            public static final Caption NO_FACTION = Caption.of(NO_FACTION_KEY);
+        }
 
 
         public static final class Database {
@@ -146,6 +154,15 @@ public class ParserCaptions {
                 switch(caption.key()) {
                     case ParserCaptions.Keys.Home.NO_FACTION_KEY: return (CommandSender sender) -> { return "You must be in a faction"; };
                     default: return (CommandSender sender) -> { return "No vault named <input>"; };
+                }
+            }
+        }
+
+        public static final class Balance {
+            public static final Function<CommandSender, String> getProvider(Caption caption) {
+                switch(caption.key()) {
+                    case ParserCaptions.Keys.Balance.NO_FACTION_KEY: return (CommandSender sender) -> { return "You must be in a faction"; };
+                    default: return (CommandSender sender) -> { return "Invalid amount"; };
                 }
             }
         }

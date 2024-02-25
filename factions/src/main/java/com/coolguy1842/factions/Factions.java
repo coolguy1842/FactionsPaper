@@ -117,6 +117,10 @@ public class Factions extends JavaPlugin {
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Vault.NO_FACTION, ParserCaptions.Providers.Vault.getProvider(ParserCaptions.Keys.Vault.NO_FACTION)))
 
 
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Balance.INVALID, ParserCaptions.Providers.Balance.getProvider(ParserCaptions.Keys.Balance.INVALID)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Balance.NO_FACTION, ParserCaptions.Providers.Balance.getProvider(ParserCaptions.Keys.Balance.NO_FACTION)))
+
+
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Database.INVALID, ParserCaptions.Providers.Database.getProvider(ParserCaptions.Keys.Database.INVALID)));
     }
 
