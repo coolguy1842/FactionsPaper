@@ -16,7 +16,8 @@ public class Rank {
         REMOVE_VAULT,
         OPEN_VAULT,
         CLAIM,
-        UNCLAIM
+        UNCLAIM,
+        WITHDRAW
     };
 
     private UUID id;

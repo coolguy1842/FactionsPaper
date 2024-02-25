@@ -18,19 +18,22 @@ import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
+import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 
 import net.kyori.adventure.text.Component;
 
-public class FactionBankDepositCommand implements BankSubcommand {
+public class FactionBankWithdrawCommand implements BankSubcommand {
     @Override
     public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
         return List.of(
-            baseCommand.literal("deposit")
-                .required("amount", BalanceParser.balanceParser(ParserType.PLAYER))
+            baseCommand.literal("withdraw")
+                .required("amount", BalanceParser.balanceParser(ParserType.FACTION))
+                    .permission(PlayerUtil.PlayerPermissions.rankPermission(RankPermission.WITHDRAW))
                     .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
                     .handler(ctx -> runCommand(ctx)),
-            baseCommand.literal("deposit")
+            baseCommand.literal("withdraw")
                 .literal("all")
+                    .permission(PlayerUtil.PlayerPermissions.rankPermission(RankPermission.WITHDRAW))
                     .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
                     .handler(ctx -> runCommandAll(ctx))
         );
@@ -44,12 +47,12 @@ public class FactionBankDepositCommand implements BankSubcommand {
 
         Long amount = ctx.get("amount");
         
-        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() + amount);
-        Factions.getFactionsCommon().playerManager.setPlayerBalance(factionPlayer.getID(), factionPlayer.getBalance() - amount);
+        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() - amount);
+        Factions.getFactionsCommon().playerManager.setPlayerBalance(factionPlayer.getID(), factionPlayer.getBalance() + amount);
      
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} deposited ${}!", Factions.getPrefix(), player.displayName(), Component.text(amount))
+            MessageUtil.format("{} {} withdrew ${}!", Factions.getPrefix(), player.displayName(), Component.text(amount))
         );
     }
 
@@ -59,13 +62,13 @@ public class FactionBankDepositCommand implements BankSubcommand {
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
         Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
         
-        Long amount = factionPlayer.getBalance();
-        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), faction.getBalance() + amount);
-        Factions.getFactionsCommon().playerManager.setPlayerBalance(factionPlayer.getID(), 0L);
+        Long amount = faction.getBalance();
+        Factions.getFactionsCommon().factionManager.setFactionBalance(faction.getID(), 0L);
+        Factions.getFactionsCommon().playerManager.setPlayerBalance(factionPlayer.getID(), factionPlayer.getBalance() + amount);
      
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} deposited ${}!", Factions.getPrefix(), player.displayName(), Component.text(amount))
+            MessageUtil.format("{} {} withdrew ${}!", Factions.getPrefix(), player.displayName(), Component.text(amount))
         );
     }
 }

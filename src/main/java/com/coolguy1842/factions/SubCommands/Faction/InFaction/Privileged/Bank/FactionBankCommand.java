@@ -14,6 +14,7 @@ import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Bank.BankSubcommands.BankSubcommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Bank.BankSubcommands.FactionBankDepositCommand;
+import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Bank.BankSubcommands.FactionBankWithdrawCommand;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
 
 public class FactionBankCommand implements Subcommand {    
@@ -22,7 +23,8 @@ public class FactionBankCommand implements Subcommand {
     @Override public Permission getPermission() { return PlayerPermissions.inFaction; }
 
     private static BankSubcommand subcommands[] = new BankSubcommand[] {
-        new FactionBankDepositCommand()
+        new FactionBankDepositCommand (),
+        new FactionBankWithdrawCommand()
     };
 
     @Override
