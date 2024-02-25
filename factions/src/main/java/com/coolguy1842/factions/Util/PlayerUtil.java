@@ -8,9 +8,11 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachment;
 import org.incendo.cloud.permission.Permission;
 
@@ -145,5 +147,35 @@ public class PlayerUtil {
 
     public static void teleportPlayer(Player player, Location location) {
         player.teleportAsync(location, TeleportCause.PLUGIN);
+    }
+
+    
+    public static Integer getAmountItem(Player player, Material item) {
+        Integer out = 0;
+        for(ItemStack itemStack : player.getInventory().getContents()) {
+            if(itemStack == null || itemStack.isEmpty()) continue;
+            if(itemStack.getType().equals(item)) out += itemStack.getAmount();
+        }
+
+        return out;
+    }
+    
+    public static void removeItemAmount(Player player, Material item, Integer amount) {
+        Integer slot = -1;
+        for(ItemStack itemStack : player.getInventory().getContents()) {
+            slot++;
+            
+            if(itemStack == null || itemStack.isEmpty()) continue;
+            if(!itemStack.getType().equals(item)) continue;
+
+            if(amount > 64) {
+                player.getInventory().clear(slot);
+                amount -= 64;
+            }
+            else {
+                itemStack.setAmount(itemStack.getAmount() - amount);
+                return;
+            }
+        }
     }
 }

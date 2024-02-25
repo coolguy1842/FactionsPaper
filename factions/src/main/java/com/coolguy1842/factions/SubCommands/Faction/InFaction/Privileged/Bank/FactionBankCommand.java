@@ -27,7 +27,7 @@ public class FactionBankCommand implements Subcommand {
 
     @Override
     public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
-        Builder<CommandSender> rankBaseCommand =
+        Builder<CommandSender> bankBaseCommand =
             baseCommand.literal(getName())
                 .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
                 .permission(getPermission());
@@ -35,7 +35,9 @@ public class FactionBankCommand implements Subcommand {
         List<Builder<CommandSender>> commands = new ArrayList<>();
 
         for(BankSubcommand subcommand : subcommands) {
-            commands.add(subcommand.getCommand(rankBaseCommand));
+            for(Builder<CommandSender> command : subcommand.getCommands(bankBaseCommand)) {
+                commands.add(command);
+            }
         }
 
         return commands;

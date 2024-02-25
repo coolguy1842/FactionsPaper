@@ -83,6 +83,13 @@ public class ParserCaptions {
             public static final String NO_FACTION_KEY = "argument.parse.failure.balance.no.faction";
             public static final Caption NO_FACTION = Caption.of(NO_FACTION_KEY);
         }
+        
+        public static final class Item {
+            public static final class Amount {
+                public static final String INVALID_KEY = "argument.parse.failure.item.amount.invalid";
+                public static final Caption INVALID = Caption.of(INVALID_KEY);
+            }
+        }
 
 
         public static final class Database {
@@ -163,6 +170,16 @@ public class ParserCaptions {
                 switch(caption.key()) {
                     case ParserCaptions.Keys.Balance.NO_FACTION_KEY: return (CommandSender sender) -> { return "You must be in a faction"; };
                     default: return (CommandSender sender) -> { return "Invalid amount"; };
+                }
+            }
+        }
+        
+        public static final class Item {
+            public static final class Amount {
+                public static final Function<CommandSender, String> getProvider(Caption caption) {
+                    switch(caption.key()) {
+                        default: return (CommandSender sender) -> { return "Invalid amount"; };
+                    }
                 }
             }
         }

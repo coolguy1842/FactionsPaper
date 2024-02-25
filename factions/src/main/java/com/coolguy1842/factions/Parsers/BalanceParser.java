@@ -9,7 +9,6 @@ import org.incendo.cloud.caption.Caption;
 import org.incendo.cloud.caption.CaptionVariable;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
-import org.incendo.cloud.exception.parsing.NumberParseException;
 import org.incendo.cloud.exception.parsing.ParserException;
 import org.incendo.cloud.parser.ArgumentParseResult;
 import org.incendo.cloud.parser.ArgumentParser;
@@ -51,7 +50,7 @@ public class BalanceParser<C> implements ArgumentParser<C, Long>, BlockingSugges
         try {
             amount = Long.parseLong(cmdInput.readString());
         }
-        catch(NumberParseException e) {
+        catch(NumberFormatException e) {
             return ArgumentParseResult.failure(new BalanceParseException(ParserCaptions.Keys.Balance.INVALID, "", ctx));
         }
 

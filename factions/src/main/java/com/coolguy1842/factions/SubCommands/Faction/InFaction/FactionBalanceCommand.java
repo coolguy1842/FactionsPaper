@@ -30,7 +30,7 @@ public class FactionBalanceCommand implements Subcommand {
     @Override
     public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
         return List.of(
-            baseCommand.literal(getName(), "bal")
+            baseCommand.literal("bal", getName())
                 .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
                 .permission(getPermission())
                 .handler(ctx -> runCommand(ctx))
