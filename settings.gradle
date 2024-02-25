@@ -10,4 +10,3 @@
 rootProject.name = archives_base_name
 
 include('common')
-include('factions')
