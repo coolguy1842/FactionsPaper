@@ -16,6 +16,7 @@ import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 
+import com.coolguy1842.factions.Commands.BalanceCommand;
 import com.coolguy1842.factions.Commands.ExecuteCommand;
 import com.coolguy1842.factions.Commands.FactionCommand;
 import com.coolguy1842.factions.Commands.QueryCommand;
@@ -74,6 +75,7 @@ public class Factions extends JavaPlugin {
         QueryCommand.register(commandManager);
         ExecuteCommand.register(commandManager);
 
+        BalanceCommand.register(commandManager);
         SellCommand.register(commandManager);
     }
 

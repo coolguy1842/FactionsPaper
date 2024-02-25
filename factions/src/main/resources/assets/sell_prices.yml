@@ -1,31 +1,37 @@
-CROPS:
-    SUGAR_CANE: 2
-    CACTUS: 2
-    WHEAT: 1
-    CARROT: 1
-    POTATO: 1
-    PUMPKIN: 5
-    MELON: 5
-    COCOA_BEAN: 10
-    BEETROOT: 1
-ANIMALS:
-    EGG: 2
-    WOOL: 4
-    LEATHER: 6
-ORES:
-    IRON_NUGGET: 5
-    IRON_INGOT: 50
-    IRON_BLOCK: 500
+crops:
+    display_item: WHEAT
+    prices:
+        SUGAR_CANE: 2
+        CACTUS: 2
+        WHEAT: 1
+        CARROT: 1
+        POTATO: 1
+        PUMPKIN: 5
+        MELON: 5
+        COCOA_BEANS: 10
+        BEETROOT: 1
+animals:
+    display_item: LEATHER
+    prices:
+        EGG: 2
+        ANY_WOOL: 4
+        LEATHER: 6
+ores:
+    display_item: DIAMOND_ORE
+    prices:
+        IRON_NUGGET: 5
+        IRON_INGOT: 50
+        IRON_BLOCK: 500
 
-    GOLD_NUGGET: 4
-    GOLD_INGOT: 40
-    GOLD_BLOCK: 400
+        GOLD_NUGGET: 4
+        GOLD_INGOT: 40
+        GOLD_BLOCK: 400
 
-    DIAMOND: 200
-    DIAMOND_BLOCK: 2000
+        DIAMOND: 200
+        DIAMOND_BLOCK: 2000
 
-    EMERALD: 150
-    EMERALD_BLOCK: 1500
+        EMERALD: 150
+        EMERALD_BLOCK: 1500
 
-    NETHERITE: 1000
-    NETHERITE_BLOCK: 10000
+        NETHERITE_INGOT: 1000
+        NETHERITE_BLOCK: 10000
