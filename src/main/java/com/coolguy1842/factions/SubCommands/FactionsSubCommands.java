@@ -10,6 +10,7 @@ import com.coolguy1842.factions.SubCommands.Faction.NoFaction.FactionRejectComma
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionBalanceCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionHomeCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionLeaveCommand;
+import com.coolguy1842.factions.SubCommands.Faction.InFaction.FactionMenuCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.FactionInviteCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.FactionKickCommand;
 import com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Bank.FactionBankCommand;
@@ -38,7 +39,9 @@ public class FactionsSubCommands {
         VAULT,
         CLAIM,
         UNCLAIM,
-        BALANCE
+        BALANCE,
+        BANK,
+        MENU
     }
 
     public static final List<Subcommand> subcommands = List.of(
@@ -58,6 +61,7 @@ public class FactionsSubCommands {
         new FactionClaimCommand  (),
         new FactionUnclaimCommand(),
         new FactionBalanceCommand(),
-        new FactionBankCommand   ()
+        new FactionBankCommand   (),
+        new FactionMenuCommand   ()
     );
 }

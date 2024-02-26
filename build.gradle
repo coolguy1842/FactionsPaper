@@ -37,6 +37,10 @@ repositories {
         }
     }
 
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+
     mavenCentral()
 }
 
@@ -52,6 +56,9 @@ dependencies {
     implementation 'org.incendo:cloud-brigadier:2.0.0-beta.2'
     implementation 'org.incendo:cloud-processors-requirements:1.0.0-beta.1'
     implementation 'org.incendo:cloud-annotations:2.0.0-beta.2'
+    
+    implementation 'org.incendo.interfaces:interfaces-core:1.0.0-SNAPSHOT'
+    implementation 'org.incendo.interfaces:interfaces-paper:1.0.0-SNAPSHOT'
     
     implementation group: 'org.assertj', name: 'assertj-core', version: '3.25.1'
     

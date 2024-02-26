@@ -15,11 +15,13 @@ import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
+import org.incendo.interfaces.paper.PaperInterfaceListeners;
 
 import com.coolguy1842.factions.Commands.BalanceCommand;
 import com.coolguy1842.factions.Commands.ExecuteCommand;
 import com.coolguy1842.factions.Commands.FactionCommand;
 import com.coolguy1842.factions.Commands.QueryCommand;
+import com.coolguy1842.factions.Commands.ShopCommand;
 import com.coolguy1842.factions.Commands.Sell.SellCommand;
 import com.coolguy1842.factions.Events.Inventory.OnInventoryClose;
 import com.coolguy1842.factions.Events.Inventory.OnInventoryInteract;
@@ -48,6 +50,8 @@ public class Factions extends JavaPlugin {
         initCommands();
         initEvents();
 
+        PaperInterfaceListeners.install(this);
+
         for(Player player : this.getServer().getOnlinePlayers()) {
             PlayerUtil.updatePlayerPermissions(player);
         }
@@ -75,7 +79,8 @@ public class Factions extends JavaPlugin {
         QueryCommand.register(commandManager);
         ExecuteCommand.register(commandManager);
 
-        BalanceCommand.register(commandManager);
+        BalanceCommand.register(commandManager);        
+        ShopCommand.register(commandManager);
         SellCommand.register(commandManager);
     }
 

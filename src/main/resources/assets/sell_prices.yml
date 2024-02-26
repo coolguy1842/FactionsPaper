@@ -1,4 +1,5 @@
-crops:
+Crops:
+    slot: 10
     display_item: WHEAT
     prices:
         SUGAR_CANE: 2
@@ -10,13 +11,15 @@ crops:
         MELON: 5
         COCOA_BEANS: 10
         BEETROOT: 1
-animals:
+Animals:
+    slot: 13
     display_item: LEATHER
     prices:
         EGG: 2
         ANY_WOOL: 4
         LEATHER: 6
-ores:
+Ores:
+    slot: 16
     display_item: DIAMOND_ORE
     prices:
         IRON_NUGGET: 5

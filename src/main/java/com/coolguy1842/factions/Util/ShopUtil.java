@@ -17,12 +17,14 @@ import com.coolguy1842.factions.Factions;
 public class ShopUtil {
     public static class ShopCategory {
         public final String name;
+        public final Integer slot;
         public final Material displayItem;
 
         public final List<Material> items;
 
-        public ShopCategory(String name, Material displayItem, List<Material> items) {
+        public ShopCategory(String name, Integer slot, Material displayItem, List<Material> items) {
             this.name = name;
+            this.slot = slot;
             this.displayItem = displayItem;
             this.items = items;
         }
@@ -44,6 +46,7 @@ public class ShopUtil {
         for(String categoryName : config.getKeys(false)) {
             ConfigurationSection categorySection = config.getConfigurationSection(categoryName);
             Material displayItem = Material.getMaterial(categorySection.getString("display_item"));
+            Integer slot = categorySection.getInt("slot");
 
             List<Material> items = new ArrayList<>();
             
@@ -82,10 +85,16 @@ public class ShopUtil {
                 }
             }
 
-            categories.add(new ShopCategory(categoryName, displayItem, items));
+            categories.add(new ShopCategory(categoryName, slot, displayItem, items));
         }
     }
 
+
+    public static List<ShopCategory> getCategories() {
+        if(categories == null || categories.size() <= 0) initCategories();
+
+        return categories;
+    }
 
     public static Optional<ShopCategory> getCategory(String category) {
         if(categories == null || categories.size() <= 0) initCategories();

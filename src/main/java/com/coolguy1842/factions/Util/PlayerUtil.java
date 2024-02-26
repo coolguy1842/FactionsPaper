@@ -168,14 +168,16 @@ public class PlayerUtil {
             if(itemStack == null || itemStack.isEmpty()) continue;
             if(!itemStack.getType().equals(item)) continue;
 
-            if(amount > 64) {
+            Integer itemAmount = itemStack.getAmount();
+            if(amount > itemAmount) {
                 player.getInventory().clear(slot);
-                amount -= 64;
             }
             else {
                 itemStack.setAmount(itemStack.getAmount() - amount);
                 return;
             }
+
+            amount -= itemAmount;
         }
     }
 }
