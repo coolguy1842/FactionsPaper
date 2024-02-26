@@ -3,7 +3,6 @@ package com.coolguy1842.factions.Transforms.Shop;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.incendo.interfaces.core.arguments.ArgumentKey;
 import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
@@ -23,98 +22,59 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
 public class CategoryTransform implements Transform<ChestPane, PlayerViewer> {
+    private static Integer getSellAmount(SellMode mode, Player player, Material material) {
+        switch (mode) {
+        case ONE: return 1;
+        case STACK: return material.getMaxStackSize();
+        case ALL: return PlayerUtil.getAmountItem(player, material);
+        default: return 0;
+        }
+    }
+
     @Override
     public ChestPane apply(ChestPane pane, InterfaceView<ChestPane, PlayerViewer> viewer) {
-        String menu = viewer.arguments().getOrDefault(CategoriesTransform.menuArgumentKey, "categories");
-        if(!menu.equals("category")) return pane;
+        ShopCategory category = viewer.arguments().getOrDefault(CategoriesTransform.categoryArgumentKey, null);
+        if(category == null) return pane;
         
-        ShopCategory category = viewer.arguments().get(ArgumentKey.of("category", ShopCategory.class));
+        Player player = viewer.viewer().player();
 
         int i = 0;
         for(Material material : category.items) {
             SellMode mode = viewer.arguments().getOrDefault(SellModeTransform.sellModeArgumentKey, SellMode.ONE);
             Long price = ShopUtil.getSellPrice(material).get();
 
-            Long sellAmount = 0L;
-
-            switch(viewer.arguments().getOrDefault(SellModeTransform.sellModeArgumentKey, SellMode.ONE)) {
-            case ONE:
-                if(PlayerUtil.getAmountItem(viewer.viewer().player(), material) >= 1) {
-                    sellAmount = 1L;
-                }
-
-                break;
-            case STACK:
-                if(PlayerUtil.getAmountItem(viewer.viewer().player(), material) >= material.getMaxStackSize()) {
-                    sellAmount = Long.valueOf(material.getMaxStackSize());
-                }
-
-                break;
-            case ALL: sellAmount = Long.valueOf(PlayerUtil.getAmountItem(viewer.viewer().player(), material)); break;
-            default: break;
-            }
-
             Component lore;
-            if(sellAmount == 0L) {
-                lore = Component.text("Not enough!").color(TextColor.color(255, 0, 0));
-            }
-            else {
-                lore = MessageUtil.format("Sell {} for ${}", Component.text(sellAmount), Component.text(price * sellAmount));
+            {
+                Integer sellAmount = getSellAmount(mode, player, material);
+                if(PlayerUtil.getAmountItem(player, material) < sellAmount || sellAmount == 0) {
+                    lore = Component.text("Not enough!").color(TextColor.color(255, 0, 0));
+                }
+                else {
+                    lore = MessageUtil.format("Sell {} for ${}", Component.text(sellAmount), Component.text(price * sellAmount));    
+                }
             }
 
             pane = pane.element(
                 ItemStackElement.of(
                     ItemUtil.createItem(material,1, null, lore),
                     (clickHandler) -> {
+                        FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+
                         ItemStack clickedItem = clickHandler.click().cause().getCurrentItem();
                         Component name = clickedItem.displayName();
-
-                        Player player = viewer.viewer().player();
-                        FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
                         
-                        switch (mode) {
-                        case ONE: {
-                            if(PlayerUtil.getAmountItem(player, material) <= 0) {
-                                player.sendMessage(MessageUtil.format("{} You don't have enough of that item.", Factions.getPrefix()));
-                                return;
-                            }
-
-                            PlayerUtil.removeItemAmount(player, material, 1);
-
-                            Factions.getFactionsCommon().playerManager.setPlayerBalance(player.getUniqueId(), factionPlayer.getBalance() + price);
-                            player.sendMessage(MessageUtil.format("{} You sold one of {} for ${}!", Factions.getPrefix(), name, Component.text(price)));
-
-                            break;
+                        // sellAmount might not have updated in time so get it again
+                        Integer sellAmount = getSellAmount(mode, viewer.viewer().player(), material);
+                        if(PlayerUtil.getAmountItem(player, material) < sellAmount || sellAmount == 0) {
+                            player.sendMessage(MessageUtil.format("{} You don't have enough of that item.", Factions.getPrefix()));
+                            return;
                         }
-                        case STACK: {
-                            Integer maxStack = clickedItem.getType().getMaxStackSize();
-                            if(PlayerUtil.getAmountItem(player, material) < maxStack) {
-                                player.sendMessage(MessageUtil.format("{} You don't have enough of that item.", Factions.getPrefix()));
-                                return;
-                            }
 
-                            PlayerUtil.removeItemAmount(player, material, maxStack);
-
-                            Factions.getFactionsCommon().playerManager.setPlayerBalance(player.getUniqueId(), factionPlayer.getBalance() + (price * maxStack));
-                            player.sendMessage(MessageUtil.format("{} You sold a stack of {} for ${}!", Factions.getPrefix(), name, Component.text(price * maxStack)));
-
-                            break;
-                        }
-                        case ALL: {
-                            Integer amount = PlayerUtil.getAmountItem(player, material);
-                            if(amount <= 0) {
-                                player.sendMessage(MessageUtil.format("{} You don't have enough of that item.", Factions.getPrefix()));
-                                return;
-                            }
-
-                            PlayerUtil.removeItemAmount(player, material, amount);
-                            Factions.getFactionsCommon().playerManager.setPlayerBalance(player.getUniqueId(), factionPlayer.getBalance() + (price * amount));
-                            player.sendMessage(MessageUtil.format("{} You sold {} of {} for ${}!", Factions.getPrefix(), Component.text(amount), name, Component.text(price * amount)));
-
-                            break;
-                        }
-                        default: break;
-                        }
+                        PlayerUtil.removeItemAmount(player, material, sellAmount);
+                        
+                        Long soldPrice = price * Long.valueOf(sellAmount);
+                        Factions.getFactionsCommon().playerManager.setPlayerBalance(player.getUniqueId(), factionPlayer.getBalance() + soldPrice);
+                        player.sendMessage(MessageUtil.format("{} You sold {} of {} for ${}!", Factions.getPrefix(), Component.text(sellAmount), name, Component.text(soldPrice)));
                     }
                 ),
                 i % 9, i / 9

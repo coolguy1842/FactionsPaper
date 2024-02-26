@@ -29,6 +29,7 @@ public class FactionMenuCommand implements Subcommand {
         ChestInterface.builder()
             .title(Component.text("Faction Menu"))
             .rows(6)
+            .cancelClicksInPlayerInventory(true)
             .updates(true, 20)
             .clickHandler(ClickHandler.cancel())
             .addTransform(PaperTransform.chestFill(ItemStackElement.of(ItemUtil.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, Component.empty()))))

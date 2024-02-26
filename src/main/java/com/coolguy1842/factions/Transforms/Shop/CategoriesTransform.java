@@ -17,13 +17,11 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 
 public class CategoriesTransform implements Transform<ChestPane, PlayerViewer> {
-    public static ArgumentKey<String> menuArgumentKey = ArgumentKey.of("menu", String.class);
     public static ArgumentKey<ShopCategory> categoryArgumentKey = ArgumentKey.of("category", ShopCategory.class);
 
     @Override
     public ChestPane apply(ChestPane pane, InterfaceView<ChestPane, PlayerViewer> viewer) {
-        String menu = viewer.arguments().getOrDefault(menuArgumentKey, "categories");
-        if(menu.equals("category")) return pane;
+        if(viewer.arguments().getOrDefault(categoryArgumentKey, null) != null) return pane;
 
         for(ShopCategory category : ShopUtil.getCategories()) {
             pane = pane.element(
@@ -31,7 +29,6 @@ public class CategoriesTransform implements Transform<ChestPane, PlayerViewer> {
                     ItemUtil.createItem(category.displayItem, 1, Component.text(category.name).style(Style.style().decoration(TextDecoration.ITALIC, false))),
                     (clickHandler) -> {
                         HashMapInterfaceArguments args = (HashMapInterfaceArguments)viewer.arguments();
-                        args.set(menuArgumentKey, "category");
                         args.set(categoryArgumentKey, category);
 
                         clickHandler.view().backing().open(clickHandler.viewer(), args);

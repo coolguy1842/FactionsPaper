@@ -6,6 +6,20 @@ import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.pane.ChestPane;
 
 public class FactionMenuTransform implements Transform<ChestPane, PlayerViewer> {
+    public static enum MenuType {
+        MENU,
+        SETTINGS,
+        PLAYERS,
+        RANKS,
+        VAULTS,
+        HOMES,
+        CLAIMS,
+        ALLIES,
+        INVITES,
+        BANK
+    }
+
+
     @Override
     public ChestPane apply(ChestPane pane, InterfaceView<ChestPane, PlayerViewer> viewer) {
         return pane;

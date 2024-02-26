@@ -30,6 +30,7 @@ public class ShopCommand {
                 .title(Component.text("Shop"))
                 .rows(4)
                 .updates(true, 20)
+                .cancelClicksInPlayerInventory(true)
                 .clickHandler(ClickHandler.cancel())
                 .addTransform(PaperTransform.chestFill(ItemStackElement.of(ItemUtil.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, Component.empty()))))
                 .addTransform(new SellModeTransform())
