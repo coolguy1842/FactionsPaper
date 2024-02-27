@@ -27,8 +27,8 @@ public class SellModeTransform implements Transform<ChestPane, PlayerViewer> {
     public static ItemStack arrowSkull = ItemUtil.createSkull(Component.empty(), "http://textures.minecraft.net/texture/5cdbf613bc0b885587294857af0cf12c01153264ac25e15773a9d8bcdc3f00a9");
 
     @Override
-    public ChestPane apply(ChestPane pane, InterfaceView<ChestPane, PlayerViewer> viewer) {
-        SellMode sellMode = viewer.arguments().getOrDefault(sellModeArgumentKey, SellMode.ONE);
+    public ChestPane apply(ChestPane pane, InterfaceView<ChestPane, PlayerViewer> view) {
+        SellMode sellMode = view.arguments().getOrDefault(sellModeArgumentKey, SellMode.ONE);
         Component displayName;
 
         switch (sellMode) {
@@ -47,7 +47,7 @@ public class SellModeTransform implements Transform<ChestPane, PlayerViewer> {
             ItemStackElement.of(
                 arrowSkull,
                 (clickHandler) -> {
-                    HashMapInterfaceArguments args = (HashMapInterfaceArguments)viewer.arguments();
+                    HashMapInterfaceArguments args = (HashMapInterfaceArguments)view.arguments();
                     if(clickHandler.cause().isLeftClick()) {
                         switch(sellMode) {
                         case ONE: args.set(sellModeArgumentKey, SellMode.STACK); break;

@@ -28,11 +28,11 @@ public class FactionMenuCommand implements Subcommand {
     private static ChestInterface menuInterface =
         ChestInterface.builder()
             .title(Component.text("Faction Menu"))
-            .rows(6)
+            .rows(5)
             .cancelClicksInPlayerInventory(true)
             .updates(true, 20)
             .clickHandler(ClickHandler.cancel())
-            .addTransform(PaperTransform.chestFill(ItemStackElement.of(ItemUtil.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, Component.empty()))))
+            .addTransform(PaperTransform.chestFill(ItemStackElement.of(ItemUtil.createItem(Material.GRAY_STAINED_GLASS_PANE, 1, Component.empty()))))
             .addTransform(new FactionMenuTransform())
             .build();
 

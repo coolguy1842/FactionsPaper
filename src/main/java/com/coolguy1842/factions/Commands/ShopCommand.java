@@ -14,9 +14,8 @@ import org.incendo.interfaces.paper.type.ChestInterface;
 
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
-import com.coolguy1842.factions.Transforms.Shop.CategoriesTransform;
-import com.coolguy1842.factions.Transforms.Shop.CategoryTransform;
 import com.coolguy1842.factions.Transforms.Shop.SellModeTransform;
+import com.coolguy1842.factions.Transforms.Shop.ShopMenuTransform;
 import com.coolguy1842.factions.Util.ItemUtil;
 
 import net.kyori.adventure.text.Component;
@@ -32,10 +31,9 @@ public class ShopCommand {
                 .updates(true, 20)
                 .cancelClicksInPlayerInventory(true)
                 .clickHandler(ClickHandler.cancel())
-                .addTransform(PaperTransform.chestFill(ItemStackElement.of(ItemUtil.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, Component.empty()))))
+                .addTransform(PaperTransform.chestFill(ItemStackElement.of(ItemUtil.createItem(Material.GRAY_STAINED_GLASS_PANE, 1, Component.empty()))))
                 .addTransform(new SellModeTransform())
-                .addTransform(new CategoriesTransform())
-                .addTransform(new CategoryTransform())
+                .addTransform(new ShopMenuTransform())
                 .build();
     }
 

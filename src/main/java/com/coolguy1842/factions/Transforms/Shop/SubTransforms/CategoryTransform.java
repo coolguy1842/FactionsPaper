@@ -1,16 +1,17 @@
-package com.coolguy1842.factions.Transforms.Shop;
+package com.coolguy1842.factions.Transforms.Shop.SubTransforms;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.incendo.interfaces.core.transform.Transform;
 import org.incendo.interfaces.core.view.InterfaceView;
 import org.incendo.interfaces.paper.PlayerViewer;
 import org.incendo.interfaces.paper.element.ItemStackElement;
 import org.incendo.interfaces.paper.pane.ChestPane;
 
 import com.coolguy1842.factions.Factions;
+import com.coolguy1842.factions.Transforms.Shop.SellModeTransform;
 import com.coolguy1842.factions.Transforms.Shop.SellModeTransform.SellMode;
+import com.coolguy1842.factions.Transforms.Shop.ShopMenuTransform;
 import com.coolguy1842.factions.Util.ItemUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
@@ -21,7 +22,7 @@ import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
-public class CategoryTransform implements Transform<ChestPane, PlayerViewer> {
+public class CategoryTransform {
     private static Integer getSellAmount(SellMode mode, Player player, Material material) {
         switch (mode) {
         case ONE: return 1;
@@ -31,16 +32,13 @@ public class CategoryTransform implements Transform<ChestPane, PlayerViewer> {
         }
     }
 
-    @Override
-    public ChestPane apply(ChestPane pane, InterfaceView<ChestPane, PlayerViewer> viewer) {
-        ShopCategory category = viewer.arguments().getOrDefault(CategoriesTransform.categoryArgumentKey, null);
-        if(category == null) return pane;
-        
-        Player player = viewer.viewer().player();
+    public static ChestPane apply(ChestPane pane, InterfaceView<ChestPane, PlayerViewer> view) {
+        ShopCategory category = view.arguments().get(ShopMenuTransform.categoryArgumentKey);
+        Player player = view.viewer().player();
 
         int i = 0;
         for(Material material : category.items) {
-            SellMode mode = viewer.arguments().getOrDefault(SellModeTransform.sellModeArgumentKey, SellMode.ONE);
+            SellMode mode = view.arguments().getOrDefault(SellModeTransform.sellModeArgumentKey, SellMode.ONE);
             Long price = ShopUtil.getSellPrice(material).get();
 
             Component lore;
@@ -64,7 +62,7 @@ public class CategoryTransform implements Transform<ChestPane, PlayerViewer> {
                         Component name = clickedItem.displayName();
                         
                         // sellAmount might not have updated in time so get it again
-                        Integer sellAmount = getSellAmount(mode, viewer.viewer().player(), material);
+                        Integer sellAmount = getSellAmount(mode, view.viewer().player(), material);
                         if(PlayerUtil.getAmountItem(player, material) < sellAmount || sellAmount == 0) {
                             player.sendMessage(MessageUtil.format("{} You don't have enough of that item.", Factions.getPrefix()));
                             return;

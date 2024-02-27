@@ -31,12 +31,19 @@ public class ItemUtil {
         return item;
     }
 
-    public static ItemStack createSkull(@Nullable Component name, String texture) {
+
+    public static ItemStack createSkull(@Nullable Component name, PlayerProfile profile) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
 
         SkullMeta meta = (SkullMeta)item.getItemMeta();
         if(name != null) meta.displayName(name);
+        meta.setPlayerProfile(profile);
 
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static ItemStack createSkull(@Nullable Component name, String texture) {
         PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
         PlayerTextures textures = profile.getTextures();
 
@@ -48,9 +55,6 @@ public class ItemUtil {
         }
     
         profile.setTextures(textures);
-        meta.setPlayerProfile(profile);
-
-        item.setItemMeta(meta);
-        return item;
+        return createSkull(name, profile);
     }
 }
