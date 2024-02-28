@@ -63,6 +63,7 @@ dependencies {
     implementation group: 'org.assertj', name: 'assertj-core', version: '3.25.1'
     
     implementation(project(":common"))
+    compileOnly(project(":discordRelay"))
 }
 
 tasks.register('move') {
@@ -71,6 +72,7 @@ tasks.register('move') {
     doFirst {
         copy {
             from(layout.buildDirectory.file("libs/${project.name}-${version}.jar"))
+            from("discordRelay/build/libs/discordRelay-${version}.jar")
             into(layout.buildDirectory.dir("MinecraftServer/plugins"))
         }
     }
@@ -93,3 +95,7 @@ shadowJar {
 // Disable jar and replace with shadowJar
 jar.enabled = false
 assemble.dependsOn(shadowJar)
+
+compileJava {
+    dependsOn ":discordRelay:shadowJar"
+}

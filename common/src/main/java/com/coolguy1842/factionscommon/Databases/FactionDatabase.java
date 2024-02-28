@@ -241,6 +241,14 @@ public class FactionDatabase implements DatabaseHandler {
         Optional<FactionOption> option = getOption(faction, key);
 
         try {
+            if(value == null) {
+                database.execute("""
+                    DELETE FROM options WHERE faction = ? AND key = ?
+                """, faction, key.name());
+
+                return;
+            }
+
             if(option.isPresent()) {
                 database.execute("""
                     UPDATE options SET value = ? WHERE faction = ? AND key = ?

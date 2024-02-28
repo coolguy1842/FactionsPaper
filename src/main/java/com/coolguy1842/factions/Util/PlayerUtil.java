@@ -20,6 +20,7 @@ import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 import com.coolguy1842.factionscommon.Classes.Rank;
+import com.coolguy1842.factionscommon.Classes.Faction.Option;
 import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 
 import net.kyori.adventure.text.Component;
@@ -119,7 +120,13 @@ public class PlayerUtil {
         Factions.getFactionsCommon().inviteManager.removeInvitesWithInvited(invitedID);
         Factions.getFactionsCommon().playerManager.setPlayerFaction(invitedID, inviterFaction);
 
+        Optional<String> defaultRank = Factions.getFactionsCommon().factionManager.getOptionValue(inviterFaction, Option.DEFAULT_RANK);
+        if(defaultRank.isPresent()) {
+            Factions.getFactionsCommon().playerManager.setPlayerRank(invitedID, UUID.fromString(defaultRank.get()));;
+        }
+
         PlayerUtil.updatePlayerPermissions(player);
+        FactionUtil.updateFactionsPlayerTabNames(inviterFaction);
 
         FactionUtil.broadcast(
             player.getServer(), inviterFaction,

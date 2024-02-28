@@ -1,7 +1,6 @@
 package com.coolguy1842.factions.Transforms.Faction.SubTransforms;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -40,20 +39,7 @@ public class PlayersTransform {
         Player player = view.viewer().player();
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
 
-        List<FactionPlayer> originalPlayers = Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionPlayer.getFaction());
-        List<FactionPlayer> players = new ArrayList<>();
-        for(Integer i = 0; i < maxPlayersPerPage * originalPlayers.size(); i++) {
-            FactionPlayer fP = originalPlayers.get(i % originalPlayers.size());
-            players.add(
-                new FactionPlayer(
-                    fP.getID(),
-                    0L,
-                    fP.getFaction(),
-                    fP.getRank()
-                )
-            );
-        }
-
+        List<FactionPlayer> players = Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionPlayer.getFaction());
         if(pageOffset >= players.size()) {
             HashMapInterfaceArguments args = (HashMapInterfaceArguments)view.arguments();
             args.set(playerPageArgumentKey, 0);

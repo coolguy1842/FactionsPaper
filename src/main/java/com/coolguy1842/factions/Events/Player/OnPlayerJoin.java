@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.coolguy1842.factions.Factions;
+import com.coolguy1842.factions.Util.DiscordUtil;
 import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
@@ -18,6 +19,7 @@ import com.coolguy1842.factionscommon.Classes.Invite;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class OnPlayerJoin implements Listener {
     @EventHandler
@@ -32,7 +34,10 @@ public class OnPlayerJoin implements Listener {
 
         PlayerUtil.updatePlayerPermissions(player);
 
-        player.getServer().broadcast(MessageUtil.format("{} joined the game!", PlayerUtil.playerGlobalName(player)));
+        Component joinMessage = MessageUtil.format("{} joined the game!", PlayerUtil.playerGlobalName(player));
+
+        player.getServer().broadcast(joinMessage);
+        DiscordUtil.sendToDiscord(PlainTextComponentSerializer.plainText().serialize(joinMessage), "Factions", DiscordUtil.getAvatar(player));
         for(Invite invite : Factions.getFactionsCommon().inviteManager.getInvitesWithInvited(player.getUniqueId())) {
             Optional<Faction> fOptional = Factions.getFactionsCommon().factionManager.getFaction(invite.getInviter());
             if(!fOptional.isPresent()) {

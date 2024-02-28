@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.Command.Builder;
 import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.processors.requirements.Requirements;
 
 import com.coolguy1842.factions.Factions;
@@ -22,6 +23,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
 public class FactionOptionGetCommand implements OptionSubcommand {
+    @Override public Permission getPermission() { return null; }
+
     @Override
     public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
         return 

@@ -17,6 +17,7 @@ import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Interfaces.Subcommand;
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
+import com.coolguy1842.factions.Util.DiscordUtil;
 import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
@@ -89,6 +90,8 @@ public class FactionCreateCommand implements Subcommand {
                 Component.text(factionName)
             )
         );
+        
+        DiscordUtil.sendToDiscord(String.format("%s created a faction named %s!", player.getName(), factionName), "Factions", null);
         
         PlayerUtil.updatePlayerPermissions(player);
         FactionUtil.updateFactionsPlayerTabNames(factionID);

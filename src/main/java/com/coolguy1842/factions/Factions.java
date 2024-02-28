@@ -25,7 +25,9 @@ import com.coolguy1842.factions.Commands.ShopCommand;
 import com.coolguy1842.factions.Commands.Sell.SellCommand;
 import com.coolguy1842.factions.Events.Inventory.OnInventoryClose;
 import com.coolguy1842.factions.Events.Inventory.OnInventoryInteract;
+import com.coolguy1842.factions.Events.Player.OnPlayerAdvancementDone;
 import com.coolguy1842.factions.Events.Player.OnPlayerChat;
+import com.coolguy1842.factions.Events.Player.OnPlayerDeath;
 import com.coolguy1842.factions.Events.Player.OnPlayerJoin;
 import com.coolguy1842.factions.Events.Player.OnPlayerLeave;
 import com.coolguy1842.factions.Events.Player.OnPlayerMove;
@@ -140,6 +142,8 @@ public class Factions extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new OnPlayerLeave(), this);
         this.getServer().getPluginManager().registerEvents(new OnPlayerChat(), this);
         this.getServer().getPluginManager().registerEvents(new OnPlayerMove(), this);
+        this.getServer().getPluginManager().registerEvents(new OnPlayerDeath(), this);
+        this.getServer().getPluginManager().registerEvents(new OnPlayerAdvancementDone(), this);
         
         this.getServer().getPluginManager().registerEvents(new OnInventoryInteract(), this);
         this.getServer().getPluginManager().registerEvents(new OnInventoryClose(), this);

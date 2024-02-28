@@ -71,6 +71,7 @@ public class FactionUtil {
             )
         );
 
+        DiscordUtil.sendToDiscord(String.format("the faction %s has been disbanded", factionName), "Factions", null);
 
         for(Player player : Bukkit.getOnlinePlayers()) {
             PlayerUtil.updatePlayerTabName(player.getPlayer());
