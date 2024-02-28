@@ -64,6 +64,8 @@ public class FactionKickCommand implements Subcommand {
         if(!kickedPlayer.isOnline()) return;
 
         PlayerUtil.updatePlayerPermissions(kickedPlayer.getPlayer());
+        PlayerUtil.updatePlayerTabName(kickedPlayer.getPlayer());
+        
         kickedPlayer.getPlayer().sendMessage(MessageUtil.format("{} You have been kicked from {}.", Factions.getPrefix(), Component.text(faction.getName())));
     }
 }

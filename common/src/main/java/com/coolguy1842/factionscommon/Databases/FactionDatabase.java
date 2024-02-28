@@ -238,17 +238,19 @@ public class FactionDatabase implements DatabaseHandler {
 
 
     public void setOption(UUID faction, Faction.Option key, String value) {
+        Optional<FactionOption> option = getOption(faction, key);
+
         try {
-            database.execute("""
-                IF EXISTS (SELECT 1 FROM options WHERE faction = ? AND key = ?)  
-                BEGIN  
-                    UPDATE options SET value = ? WHERE faction = ? AND key = ?;  
-                END 
-                ELSE 
-                BEGIN 
-                    INSERT INTO options(faction, key, value) VALUES(?, ?, ?);
-                END
-            """, faction, key.name(), value, faction, key.name(), faction, key.name(), value);
+            if(option.isPresent()) {
+                database.execute("""
+                    UPDATE options SET value = ? WHERE faction = ? AND key = ?
+                """, value, faction, key.name());
+            }
+            else {
+                database.execute("""
+                    INSERT INTO options(faction, key, value) VALUES(?, ?, ?)
+                """, faction, key.name(), value);
+            }
         }
         catch (SQLException e) {
             e.printStackTrace();

@@ -52,5 +52,6 @@ public class FactionLeaveCommand implements Subcommand {
 
         Factions.getFactionsCommon().playerManager.setPlayerFaction(player.getUniqueId(), null);
         PlayerUtil.updatePlayerPermissions(player);
+        PlayerUtil.updatePlayerTabName(player.getPlayer());
     }
 }

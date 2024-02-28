@@ -13,6 +13,7 @@ import com.coolguy1842.factions.Interfaces.Subcommand;
 import com.coolguy1842.factions.Parsers.FactionParser;
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
+import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
 import com.coolguy1842.factionscommon.Classes.Faction;
@@ -39,5 +40,6 @@ public class FactionAcceptCommand implements Subcommand {
         final Faction faction = ctx.get("faction");
 
         PlayerUtil.acceptInvite(player.getServer(), faction.getID(), player.getUniqueId());
+        FactionUtil.updateFactionsPlayerTabNames(faction.getID());
     }
 }

@@ -170,7 +170,6 @@ public class FactionManager {
     public void setOption(UUID faction, Faction.Option key, String value) {
         assertThat(faction).isNotNull().withFailMessage("FactionManager#setOption failed: faction == null");
         assertThat(key).isNotNull().withFailMessage("FactionManager#setOption failed: key == null");
-        assertThat(value).isNotNull().withFailMessage("FactionManager#setOption failed: value == null");
 
         assertThat(factions).containsKey(faction).withFailMessage("FactionManager#setOption failed: faction with id %s does not exist", faction);
         if(!options.containsKey(faction)) options.put(faction, new ArrayList<>());
@@ -178,7 +177,18 @@ public class FactionManager {
         Optional<FactionOption> option = getOption(faction, key);
 
         database.setOption(faction, key, value);
+
+        if(value == null) {
+            if(option.isPresent()) {
+                removeFromCache(option.get());
+            }
+
+            return;
+        }
+
+        
         if(option.isPresent()) option.get().setValue(value);
+        else addToCache(new FactionOption(faction, key, value));
     }
 
 

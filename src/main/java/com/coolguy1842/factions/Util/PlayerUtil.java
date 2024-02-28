@@ -180,4 +180,21 @@ public class PlayerUtil {
             amount -= itemAmount;
         }
     }
+
+
+    public static Component playerGlobalName(Player player) {
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        
+        Optional<Faction> faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction());
+        if(faction.isPresent()) {
+            return MessageUtil.format("[{}] {}", FactionUtil.getFactionDisplayName(faction.get()), Component.text(player.getName()));   
+        }
+
+        return Component.text(player.getName());
+    }
+
+
+    public static void updatePlayerTabName(Player player) {
+        player.playerListName(playerGlobalName(player));
+    }
 }

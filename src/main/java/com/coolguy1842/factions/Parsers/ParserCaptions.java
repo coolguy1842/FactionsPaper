@@ -37,6 +37,11 @@ public class ParserCaptions {
         }
 
         public static final class Faction {
+            public static final class Option {
+                public static final String INVALID_KEY = "argument.parse.failure.faction.option.invalid";
+                public static final Caption INVALID = Caption.of(INVALID_KEY);
+            }
+
             public static final String INVALID_KEY = "argument.parse.failure.faction.invalid";
             public static final Caption INVALID = Caption.of(INVALID_KEY);
             
@@ -46,7 +51,7 @@ public class ParserCaptions {
             public static final String NO_INVITE_KEY = "argument.parse.failure.faction.no.invite";
             public static final Caption NO_INVITE = Caption.of(NO_INVITE_KEY);
         }
-
+        
         public static final class Rank {
             public static final class Permission {
                 public static final String INVALID_KEY = "argument.parse.failure.rank.permission.invalid";
@@ -121,6 +126,14 @@ public class ParserCaptions {
         }
 
         public static final class Faction {
+            public static final class Option {
+                public static final Function<CommandSender, String> getProvider(Caption caption) {
+                    switch(caption.key()) {
+                        default: return (CommandSender sender) -> { return "No faction option named <input>"; };
+                    }
+                }
+            }
+
             public static final Function<CommandSender, String> getProvider(Caption caption) {
                 switch(caption.key()) {
                     case ParserCaptions.Keys.Faction.NOT_OWN_KEY: return (CommandSender sender) -> { return "You can't specify your own faction"; };

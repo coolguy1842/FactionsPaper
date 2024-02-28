@@ -40,7 +40,13 @@ public class OnPlayerMove implements Listener {
 
         if(claim.isPresent()) {
             Faction faction = Factions.getFactionsCommon().factionManager.getFaction(claim.get().getFaction()).get();
-            player.showTitle(Title.title(FactionUtil.getFactionDisplayName(faction), Component.text().asComponent(), titleShowTime));
+            player.showTitle(
+                Title.title(
+                    FactionUtil.getFactionDisplayName(faction),
+                    Component.text("Now Entering").asComponent(),
+                    titleShowTime
+                )
+            );
             
             playersLastChunkFaction.put(player.getUniqueId(), faction.getID());
         }
@@ -48,7 +54,7 @@ public class OnPlayerMove implements Listener {
             player.showTitle(
                 Title.title(
                     Component.text("Wilderness").color(TextColor.color(85, 255, 85)).asComponent(),
-                    Component.text().asComponent(),
+                    Component.text("Now Entering").asComponent(),
                     titleShowTime
                 )
             );

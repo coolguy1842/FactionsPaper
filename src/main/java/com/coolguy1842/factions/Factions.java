@@ -107,6 +107,9 @@ public class Factions extends JavaPlugin {
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.NOT_OWN, ParserCaptions.Providers.Faction.getProvider(ParserCaptions.Keys.Faction.NOT_OWN)))
 
 
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.Option.INVALID, ParserCaptions.Providers.Faction.Option.getProvider(ParserCaptions.Keys.Faction.Option.INVALID)))
+
+
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.INVALID, ParserCaptions.Providers.Rank.getProvider(ParserCaptions.Keys.Rank.INVALID)))
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.NO_FACTION, ParserCaptions.Providers.Rank.getProvider(ParserCaptions.Keys.Rank.NO_FACTION)))
 
