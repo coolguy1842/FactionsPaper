@@ -97,6 +97,22 @@ public class ParserCaptions {
         }
 
 
+        public static final class TPA {
+            public static final class Player {
+                public static final String INVALID_KEY = "argument.parse.failure.tpa.player.invalid";
+                public static final Caption INVALID = Caption.of(INVALID_KEY);
+                
+                public static final String SELF_KEY = "argument.parse.failure.tpa.player.self";
+                public static final Caption SELF = Caption.of(SELF_KEY);
+                
+                public static final String HAS_REQUEST_KEY = "argument.parse.failure.tpa.player.has.request";
+                public static final Caption HAS_REQUEST = Caption.of(HAS_REQUEST_KEY);
+
+                public static final String NO_REQUEST_KEY = "argument.parse.failure.tpa.player.no.request";
+                public static final Caption NO_REQUEST = Caption.of(NO_REQUEST_KEY);
+            }
+        }
+    
         public static final class Database {
             public static final String INVALID_KEY = "argument.parse.failure.database.invalid";
             public static final Caption INVALID = Caption.of(INVALID_KEY);
@@ -198,6 +214,20 @@ public class ParserCaptions {
         }
 
         
+        
+        public static final class TPA {
+            public static final class Player {
+                public static final Function<CommandSender, String> getProvider(Caption caption) {
+                    switch(caption.key()) {
+                        case Keys.TPA.Player.SELF_KEY: return (CommandSender sender) -> { return "You cannot tpa to yourself"; };
+                        case Keys.TPA.Player.HAS_REQUEST_KEY: return (CommandSender sender) -> { return "<input> already has a request"; };
+                        case Keys.TPA.Player.NO_REQUEST_KEY: return (CommandSender sender) -> { return "You have no request from <input>"; };
+                        default: return (CommandSender sender) -> { return "No player named <input>"; };
+                    }
+                }
+            }
+        }
+
         public static final class Database {
             public static final Function<CommandSender, String> getProvider(Caption caption) {
                 switch(caption.key()) {

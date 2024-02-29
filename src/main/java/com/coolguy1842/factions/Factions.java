@@ -23,6 +23,10 @@ import com.coolguy1842.factions.Commands.FactionCommand;
 import com.coolguy1842.factions.Commands.QueryCommand;
 import com.coolguy1842.factions.Commands.ShopCommand;
 import com.coolguy1842.factions.Commands.Sell.SellCommand;
+import com.coolguy1842.factions.Commands.TPA.TPACommand;
+import com.coolguy1842.factions.Commands.TPA.TPAHereCommand;
+import com.coolguy1842.factions.Commands.TPA.TPAcceptCommand;
+import com.coolguy1842.factions.Commands.TPA.TPDenyCommand;
 import com.coolguy1842.factions.Events.Inventory.OnInventoryClose;
 import com.coolguy1842.factions.Events.Inventory.OnInventoryInteract;
 import com.coolguy1842.factions.Events.Player.OnPlayerAdvancementDone;
@@ -31,6 +35,7 @@ import com.coolguy1842.factions.Events.Player.OnPlayerDeath;
 import com.coolguy1842.factions.Events.Player.OnPlayerJoin;
 import com.coolguy1842.factions.Events.Player.OnPlayerLeave;
 import com.coolguy1842.factions.Events.Player.OnPlayerMove;
+import com.coolguy1842.factions.Managers.TPAManager;
 import com.coolguy1842.factions.Parsers.ParserCaptions;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.MessageUtil;
@@ -84,6 +89,11 @@ public class Factions extends JavaPlugin {
         BalanceCommand.register(commandManager);        
         ShopCommand.register(commandManager);
         SellCommand.register(commandManager);
+
+        TPACommand.register(commandManager);
+        TPAHereCommand.register(commandManager);
+        TPAcceptCommand.register(commandManager);
+        TPDenyCommand.register(commandManager);
     }
 
     private void registerCaptions() {        
@@ -134,6 +144,12 @@ public class Factions extends JavaPlugin {
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Item.Amount.INVALID, ParserCaptions.Providers.Item.Amount.getProvider(ParserCaptions.Keys.Item.Amount.INVALID)))
 
 
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.TPA.Player.INVALID, ParserCaptions.Providers.TPA.Player.getProvider(ParserCaptions.Keys.TPA.Player.INVALID)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.TPA.Player.SELF, ParserCaptions.Providers.TPA.Player.getProvider(ParserCaptions.Keys.TPA.Player.SELF)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.TPA.Player.HAS_REQUEST, ParserCaptions.Providers.TPA.Player.getProvider(ParserCaptions.Keys.TPA.Player.HAS_REQUEST)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.TPA.Player.NO_REQUEST, ParserCaptions.Providers.TPA.Player.getProvider(ParserCaptions.Keys.TPA.Player.NO_REQUEST)))
+
+
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Database.INVALID, ParserCaptions.Providers.Database.getProvider(ParserCaptions.Keys.Database.INVALID)));
     }
 
@@ -153,6 +169,7 @@ public class Factions extends JavaPlugin {
     @Override
     public void onDisable() {
         getFactionsCommon().close();
+        TPAManager.getInstance().close();
 
         commandManager = null;
         plugin = null;

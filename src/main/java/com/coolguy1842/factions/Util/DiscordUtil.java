@@ -1,6 +1,7 @@
 package com.coolguy1842.factions.Util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import com.coolguy1842.factions.Factions;
@@ -9,7 +10,7 @@ import coolguy1842.discordrelay.Util.SendToDiscordEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class DiscordUtil {
-    public static String getAvatar(Player player) {
+    public static String getAvatar(OfflinePlayer player) {
         return String.format("https://mc-heads.net/avatar/%s", player.getUniqueId());
     }
 

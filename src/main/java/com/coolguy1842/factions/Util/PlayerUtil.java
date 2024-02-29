@@ -6,10 +6,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -153,7 +156,41 @@ public class PlayerUtil {
 
 
     public static void teleportPlayer(Player player, Location location) {
-        player.teleportAsync(location, TeleportCause.PLUGIN);
+        if(player == null || !player.isOnline()) return;
+
+        if(!player.isInsideVehicle()) {
+            player.setFallDistance(-Float.MAX_VALUE);
+            player.teleportAsync(location, TeleportCause.PLUGIN);
+
+            return;
+        }
+        
+        Bukkit.getScheduler().runTaskLater(Factions.getPlugin(), () -> {
+            Entity vehicle = player.getVehicle();
+            List<Entity> passengers = vehicle.getPassengers();
+            
+            for(Entity passenger : passengers) {
+                passenger.leaveVehicle();
+                
+                if(passenger instanceof Player) {
+                    ((Player)passenger).hideEntity(Factions.getPlugin(), vehicle);
+                }
+
+                passenger.teleport(location, TeleportCause.PLUGIN);
+            }
+            
+            vehicle.teleport(location, TeleportCause.PLUGIN);
+
+            Bukkit.getScheduler().runTaskLater(Factions.getPlugin(), () -> {
+                for(Entity passenger : passengers) {
+                    if(passenger instanceof Player) {
+                        ((Player)passenger).showEntity(Factions.getPlugin(), vehicle);
+                    }
+
+                    vehicle.addPassenger(passenger);
+                }
+            }, 4);
+        }, 0);
     }
 
     

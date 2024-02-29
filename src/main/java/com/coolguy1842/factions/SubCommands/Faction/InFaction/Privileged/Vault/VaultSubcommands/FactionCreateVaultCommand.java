@@ -46,9 +46,9 @@ public class FactionCreateVaultCommand implements VaultSubcommand {
             FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
             Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
     
-            String vaultName = ctx.get("name");
+            String vaultName = ctx.getOrDefault("name", "vault");
             if(Factions.getFactionsCommon().vaultManager.getVault(faction.getID(), vaultName).isPresent()) {
-                return MessageUtil.format(getErrorMessages().get("vaultExists"), Component.text((String)ctx.get("name")));
+                return MessageUtil.format(getErrorMessages().get("vaultExists"), Component.text((String)ctx.getOrDefault("name", "vault")));
             }
 
             

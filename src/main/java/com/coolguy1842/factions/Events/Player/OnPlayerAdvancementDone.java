@@ -15,6 +15,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 public class OnPlayerAdvancementDone implements Listener {
     @EventHandler
     private void onLeave(PlayerAdvancementDoneEvent e) {
+        if(e.message() == null) return;
         Player player = e.getPlayer();
         
         Component message = e.message();

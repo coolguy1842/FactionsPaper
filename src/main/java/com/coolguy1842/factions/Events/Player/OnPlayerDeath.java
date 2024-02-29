@@ -15,6 +15,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 public class OnPlayerDeath implements Listener {
     @EventHandler
     private void onLeave(PlayerDeathEvent e) {
+        if(e.deathMessage() == null) return;
         Player player = e.getPlayer();
         
         Component deathMessage = e.deathMessage();

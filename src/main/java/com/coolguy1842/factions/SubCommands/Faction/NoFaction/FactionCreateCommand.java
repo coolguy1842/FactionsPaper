@@ -91,7 +91,7 @@ public class FactionCreateCommand implements Subcommand {
             )
         );
         
-        DiscordUtil.sendToDiscord(String.format("%s created a faction named %s!", player.getName(), factionName), "Factions", null);
+        DiscordUtil.sendToDiscord(String.format("%s created a faction named %s!", player.getName(), factionName), "Factions", DiscordUtil.getAvatar(player));
         
         PlayerUtil.updatePlayerPermissions(player);
         FactionUtil.updateFactionsPlayerTabNames(factionID);

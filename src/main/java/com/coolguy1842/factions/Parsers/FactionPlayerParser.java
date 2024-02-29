@@ -81,15 +81,16 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>,
         }
         
 
-        Boolean hasInvite = Factions.getFactionsCommon().inviteManager.getInvite(senderFactionPlayer.getFaction(), player.getUniqueId()).isPresent();
-        if(_types.contains(ParserType.HAS_INVITE) && !hasInvite) {
-            return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.HAS_NO_INVITE, input, ctx));
-        }
+        if(senderFactionPlayer.getFaction() != null) {
+            Boolean hasInvite = Factions.getFactionsCommon().inviteManager.getInvite(senderFactionPlayer.getFaction(), player.getUniqueId()).isPresent();
+            if(_types.contains(ParserType.HAS_INVITE) && !hasInvite) {
+                return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.HAS_NO_INVITE, input, ctx));
+            }
 
-        if(_types.contains(ParserType.HAS_NO_INVITE) && hasInvite) {
-            return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.HAS_INVITE, input, ctx));
+            if(_types.contains(ParserType.HAS_NO_INVITE) && hasInvite) {
+                return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.HAS_INVITE, input, ctx));
+            }
         }
-
 
         if(_types.contains(ParserType.NOT_LEADER) && inFaction) {
             Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
@@ -138,9 +139,12 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>,
 
             if(_types.contains(ParserType.NOT_IN_FACTION) && inFaction) continue;
             
-            Boolean hasInvite = Factions.getFactionsCommon().inviteManager.getInvite(senderFactionPlayer.getFaction(), player.getUniqueId()).isPresent();
-            if(_types.contains(ParserType.HAS_INVITE) && !hasInvite) continue;
-            if(_types.contains(ParserType.HAS_NO_INVITE) && hasInvite) continue;
+            
+            if(senderFactionPlayer.getFaction() != null) {
+                Boolean hasInvite = Factions.getFactionsCommon().inviteManager.getInvite(senderFactionPlayer.getFaction(), player.getUniqueId()).isPresent();
+                if(_types.contains(ParserType.HAS_INVITE) && !hasInvite) continue;
+                if(_types.contains(ParserType.HAS_NO_INVITE) && hasInvite) continue;
+            }
 
             if(_types.contains(ParserType.NOT_LEADER) && inFaction) {
                 Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();

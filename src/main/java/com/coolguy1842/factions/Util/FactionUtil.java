@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factionscommon.Classes.Faction;
@@ -22,7 +24,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
 public class FactionUtil {
-    public static void disbandFaction(Server server, UUID factionID) {
+    public static void disbandFaction(Server server, Location vaultItemDropLocation, UUID factionID) {
         Optional<Faction> factionOptional = Factions.getFactionsCommon().factionManager.getFaction(factionID);
         if(!factionOptional.isPresent()) return;
 
@@ -41,6 +43,12 @@ public class FactionUtil {
         
         // remove all vaults from this faction
         for(Vault vault : new ArrayList<>(Factions.getFactionsCommon().vaultManager.getVaultsInFaction(factionID))) {
+            for(ItemStack item : VaultUtil.getVaultInventory(vault).getContents()) {
+                if(item == null || item.isEmpty()) continue;
+
+                vaultItemDropLocation.getWorld().dropItemNaturally(vaultItemDropLocation, item);
+            }
+
             VaultUtil.removeVaultInventory(vault);
             Factions.getFactionsCommon().vaultManager.removeVault(vault.getID());
         }
@@ -61,6 +69,7 @@ public class FactionUtil {
             }
         }
 
+        UUID leader = faction.getLeader();
         Factions.getFactionsCommon().factionManager.removeFaction(faction.getID());
 
         server.broadcast(
@@ -71,7 +80,7 @@ public class FactionUtil {
             )
         );
 
-        DiscordUtil.sendToDiscord(String.format("the faction %s has been disbanded", factionName), "Factions", null);
+        DiscordUtil.sendToDiscord(String.format("the faction %s has been disbanded", factionName), "Factions", DiscordUtil.getAvatar(Bukkit.getOfflinePlayer(leader)));
 
         for(Player player : Bukkit.getOnlinePlayers()) {
             PlayerUtil.updatePlayerTabName(player.getPlayer());

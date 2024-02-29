@@ -39,6 +39,6 @@ public class FactionDisbandCommand implements Subcommand {
         Player player = (Player)ctx.sender();
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
 
-        FactionUtil.disbandFaction(player.getServer(), factionPlayer.getFaction());
+        FactionUtil.disbandFaction(player.getServer(), player.getLocation(), factionPlayer.getFaction());
     }
 }

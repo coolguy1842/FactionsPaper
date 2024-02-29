@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public final class DiscordRelay extends JavaPlugin implements Listener {
-    MessageListener listener;
+    private MessageListener listener;
 
     @Override
     public void onEnable() {
@@ -57,8 +57,10 @@ public final class DiscordRelay extends JavaPlugin implements Listener {
         }
 
         if(Globals.jda != null) {
-
-            Globals.jda.removeEventListener(listener);
+            if(listener != null) {
+                Globals.jda.removeEventListener(listener);
+            }
+            
             Globals.jda.shutdownNow();
 
             Globals.jda = null;
