@@ -34,7 +34,7 @@ public class FactionOptionSetCommand implements OptionSubcommand {
     public class Requirement implements Interface {
         public Map<String, Component> getErrorMessages() {
             return Map.ofEntries(
-                Map.entry("invalidColour", Component.text("Invalid colour format. (Correct Usage: \"#hexhere\")")),
+                Map.entry("invalidColour", Component.text("Invalid colour format. (Correct Usage (quotes needed): \"#hexhere\")")),
                 Map.entry("invalidDefaultRank", Component.text("Invalid rank.")),
                 Map.entry("error", Component.text("Error"))
             );

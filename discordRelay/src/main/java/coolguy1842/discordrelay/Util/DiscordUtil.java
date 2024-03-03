@@ -2,7 +2,6 @@ package coolguy1842.discordrelay.Util;
 
 import javax.annotation.Nonnull;
 
-import coolguy1842.discordrelay.Globals;
 import net.dv8tion.jda.api.entities.Webhook;
 
 public class DiscordUtil {

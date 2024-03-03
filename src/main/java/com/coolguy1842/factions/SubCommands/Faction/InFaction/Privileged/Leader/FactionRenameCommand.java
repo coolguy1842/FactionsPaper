@@ -17,6 +17,7 @@ import com.coolguy1842.factions.Interfaces.Subcommand;
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.DiscordUtil;
+import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
@@ -79,5 +80,7 @@ public class FactionRenameCommand implements Subcommand {
 
         String playerName = PlainTextComponentSerializer.plainText().serialize(player.displayName()); 
         DiscordUtil.sendToDiscord(String.format("%s renamed their faction from %s to %s!", playerName, oldName, name), "Factions", DiscordUtil.getAvatar(player));
+    
+        FactionUtil.updateFactionsPlayerTabNames(factionPlayer.getFaction());
     }
 }

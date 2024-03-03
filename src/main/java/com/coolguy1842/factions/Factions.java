@@ -40,6 +40,7 @@ import com.coolguy1842.factions.Parsers.ParserCaptions;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
+import com.coolguy1842.factions.Util.VaultUtil;
 import com.coolguy1842.factionscommon.FactionsCommon;
 
 public class Factions extends JavaPlugin {
@@ -168,6 +169,8 @@ public class Factions extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        VaultUtil.resetVaultInventories();
+
         getFactionsCommon().close();
         TPAManager.getInstance().close();
 

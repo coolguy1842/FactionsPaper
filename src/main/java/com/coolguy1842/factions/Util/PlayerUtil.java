@@ -99,7 +99,7 @@ public class PlayerUtil {
                 continue;
             }
 
-            Boolean hasPermission = rankOptional.get().hasPermission(rankPermission.name());            
+            Boolean hasPermission = rankOptional.get().hasPermission(rankPermission.name()) || rankOptional.get().hasPermission(RankPermission.ADMIN.name());
             attachment.setPermission(PlayerPermissions.rankPermission(rankPermission).permissionString(), hasPermission);
             attachment.setPermission(PlayerPermissions.notRankPermission(rankPermission).permissionString(), !hasPermission);
         }
