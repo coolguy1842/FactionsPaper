@@ -48,7 +48,7 @@ public class FactionRankAssignCommand implements RankSubcommand {
 
         FactionUtil.broadcast(
             sender.getServer(), faction.getID(),
-            MessageUtil.format("{} {} assigned the rank of {} to {}.", Factions.getPrefix(), sender.displayName(), Component.text(player.getName()), Component.text(rank.getName()))
+            MessageUtil.format("{} {} assigned the rank of {} to {}.", FactionUtil.getFactionNameAsPrefix(faction), sender.displayName(), Component.text(player.getName()), Component.text(rank.getName()))
         );
 
         if(player.isOnline()) {

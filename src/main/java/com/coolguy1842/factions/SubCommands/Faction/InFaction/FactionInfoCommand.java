@@ -2,6 +2,7 @@ package com.coolguy1842.factions.SubCommands.Faction.InFaction;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.Command.Builder;
@@ -21,18 +22,21 @@ import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 
-public class FactionLeaveCommand implements Subcommand {
-    @Override public String getName() { return "leave"; }
-    @Override public String getDescription() { return "Leaves your faction!"; }
-    @Override public Permission getPermission() {
-        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.notLeader);
-    }
+public class FactionInfoCommand implements Subcommand {
+    @Override public String getName() { return "info"; }
+    @Override public String getDescription() { return "Shows info about your faction!"; }
+    @Override public Permission getPermission() { return PlayerPermissions.inFaction; }
 
     @Override
     public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
         return List.of(
             baseCommand.literal(getName())
+                .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
+                .permission(getPermission())
+                .handler(ctx -> runCommand(ctx)),
+            baseCommand
                 .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
                 .permission(getPermission())
                 .handler(ctx -> runCommand(ctx))
@@ -43,15 +47,24 @@ public class FactionLeaveCommand implements Subcommand {
     public void runCommand(CommandContext<CommandSender> ctx) {
         Player player = (Player)ctx.sender();
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
+
         Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
-        
-        FactionUtil.broadcast(
-            player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} has left the faction!", FactionUtil.getFactionNameAsPrefix(faction), Component.text(player.getName()))
+
+        player.sendMessage(
+            MessageUtil.format(
+                "{} {} Info {}",
+                Component.text("    ").decorate(TextDecoration.STRIKETHROUGH),
+                FactionUtil.getFactionDisplayName(faction),
+                Component.text("    ").decorate(TextDecoration.STRIKETHROUGH)
+            )
         );
 
-        Factions.getFactionsCommon().playerManager.setPlayerFaction(player.getUniqueId(), null);
-        PlayerUtil.updatePlayerPermissions(player);
-        PlayerUtil.updatePlayerTabName(player.getPlayer());
+        player.sendMessage(String.format("Leader: %s", Bukkit.getOfflinePlayer(faction.getLeader()).getName()));
+        player.sendMessage(String.format("Members: %d", Factions.getFactionsCommon().playerManager.getPlayersWithFaction(faction.getID()).size()));
+        player.sendMessage(String.format("Balance: %d", faction.getBalance()));
+        player.sendMessage(String.format("Homes: %d", Factions.getFactionsCommon().homeManager.getHomesWithOwner(faction.getID()).size()));
+        player.sendMessage(String.format("Vaults: %d", Factions.getFactionsCommon().vaultManager.getVaultsInFaction(faction.getID()).size()));
+
+        player.sendMessage(Component.text("                " + (" ".repeat(faction.getName().length() * 2))).decorate(TextDecoration.STRIKETHROUGH));
     }
 }

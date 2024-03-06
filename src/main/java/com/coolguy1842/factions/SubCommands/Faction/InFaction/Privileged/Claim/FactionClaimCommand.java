@@ -92,7 +92,7 @@ public class FactionClaimCommand implements Subcommand {
 
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} has claimed a chunk!", Factions.getPrefix(), player.displayName())
+            MessageUtil.format("{} {} claimed a chunk!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName())
         );
     }
 }

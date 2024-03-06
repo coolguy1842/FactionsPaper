@@ -39,7 +39,7 @@ public class FactionRankRemoveCommand implements RankSubcommand {
         Rank rank = ctx.get("name");
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} has removed the rank named {}.", Factions.getPrefix(), player.displayName(), Component.text(rank.getName()))
+            MessageUtil.format("{} {} has removed the rank named {}.", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(rank.getName()))
         );
 
         for(FactionPlayer fP : Factions.getFactionsCommon().playerManager.getPlayersWithRank(rank.getID())) {

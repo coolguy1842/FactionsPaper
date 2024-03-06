@@ -1,4 +1,4 @@
-package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged;
+package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Leader;
 
 import java.util.List;
 
@@ -21,24 +21,22 @@ import com.coolguy1842.factions.Util.FactionUtil;
 import com.coolguy1842.factions.Util.MessageUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factions.Util.PlayerUtil.PlayerPermissions;
-import com.coolguy1842.factionscommon.Classes.Faction;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
-import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 
 import net.kyori.adventure.text.Component;
 
-public class FactionKickCommand implements Subcommand {    
-    @Override public String getName() { return "kick"; }
-    @Override public String getDescription() { return "Kicks the specified player from the faction!"; }
+public class FactionTransferCommand implements Subcommand {    
+    @Override public String getName() { return "transfer"; }
+    @Override public String getDescription() { return "Transfers your faction to the specified player!"; }
     @Override public Permission getPermission() {
-        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.rankPermission(RankPermission.KICK));
+        return Permission.allOf(PlayerPermissions.inFaction, PlayerPermissions.leader);
     }
 
     @Override
     public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
         return List.of(
             baseCommand.literal(getName())
-                .required("player", FactionPlayerParser.withOptions(ParserType.INCLUDES_OFFLINE, ParserType.IN_SAME_FACTION, ParserType.NOT_LEADER))
+                .required("player", FactionPlayerParser.withOptions(ParserType.INCLUDES_OFFLINE, ParserType.IN_SAME_FACTION))
                     .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
                     .permission(getPermission())
                     .handler(ctx -> runCommand(ctx))
@@ -49,23 +47,26 @@ public class FactionKickCommand implements Subcommand {
     public void runCommand(CommandContext<CommandSender> ctx) {
         Player player = (Player)ctx.sender();
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
-        Faction faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get();
 
-        FactionPlayer kicked = ctx.get("player");
-        OfflinePlayer kickedPlayer = Bukkit.getOfflinePlayer(kicked.getID());
+        FactionPlayer transferee = ctx.get("player");
+        OfflinePlayer transfereePlayer = Bukkit.getOfflinePlayer(transferee.getID());
 
-        Factions.getFactionsCommon().playerManager.setPlayerFaction(kicked.getID(), null);
+        Factions.getFactionsCommon().factionManager.setFactionLeader(factionPlayer.getFaction(), transferee.getID());
 
         FactionUtil.broadcast(
-            ctx.sender().getServer(), factionPlayer.getFaction(),
-            MessageUtil.format("{} {} kicked {} from the faction!", FactionUtil.getFactionNameAsPrefix(faction), Component.text(player.getName()), Component.text(kickedPlayer.getName()))
+            player.getServer(), factionPlayer.getFaction(),
+            MessageUtil.format(
+                "{} {} has transferred the faction to {}!",
+                FactionUtil.getFactionNameAsPrefix(Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction()).get()),
+                Component.text(player.getName()),
+                Component.text(transfereePlayer.getName())
+            )
         );
 
-        if(!kickedPlayer.isOnline()) return;
+        if(transfereePlayer.isOnline()) {
+            PlayerUtil.updatePlayerPermissions(transfereePlayer.getPlayer());
+        }
 
-        PlayerUtil.updatePlayerPermissions(kickedPlayer.getPlayer());
-        PlayerUtil.updatePlayerTabName(kickedPlayer.getPlayer());
-        
-        kickedPlayer.getPlayer().sendMessage(MessageUtil.format("{} You have been kicked from {}.", Factions.getPrefix(), Component.text(faction.getName())));
+        PlayerUtil.updatePlayerPermissions(player);
     }
 }

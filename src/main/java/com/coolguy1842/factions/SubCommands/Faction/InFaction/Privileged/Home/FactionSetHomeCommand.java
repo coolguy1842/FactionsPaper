@@ -100,7 +100,7 @@ public class FactionSetHomeCommand implements Subcommand {
             
             FactionUtil.broadcast(
                 player.getServer(), faction.getID(),
-                MessageUtil.format("{} {} updated location of the home {}.", Factions.getPrefix(), player.displayName(), Component.text(homeName))
+                MessageUtil.format("{} {} updated location of the home {}.", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(homeName))
             );
 
             return;
@@ -119,7 +119,7 @@ public class FactionSetHomeCommand implements Subcommand {
 
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} created a new home named {}.", Factions.getPrefix(), player.displayName(), Component.text(homeName))
+            MessageUtil.format("{} {} created a new home named {}.", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(homeName))
         );
     }
 }

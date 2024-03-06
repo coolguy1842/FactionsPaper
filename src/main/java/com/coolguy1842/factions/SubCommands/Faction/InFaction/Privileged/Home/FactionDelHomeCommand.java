@@ -94,7 +94,7 @@ public class FactionDelHomeCommand implements Subcommand {
         Factions.getFactionsCommon().homeManager.removeHome(home.getID());
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} deleted the home {}.", Factions.getPrefix(), player.displayName(), Component.text(home.getName()))
+            MessageUtil.format("{} {} deleted the home {}.", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(home.getName()))
         );
     }
 }

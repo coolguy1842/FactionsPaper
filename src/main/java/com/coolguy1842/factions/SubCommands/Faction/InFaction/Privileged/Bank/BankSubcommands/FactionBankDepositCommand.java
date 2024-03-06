@@ -49,7 +49,7 @@ public class FactionBankDepositCommand implements BankSubcommand {
      
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} deposited ${}!", Factions.getPrefix(), player.displayName(), Component.text(amount))
+            MessageUtil.format("{} {} deposited ${}!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(amount))
         );
     }
 
@@ -65,7 +65,7 @@ public class FactionBankDepositCommand implements BankSubcommand {
      
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} deposited ${}!", Factions.getPrefix(), player.displayName(), Component.text(amount))
+            MessageUtil.format("{} {} deposited ${}!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(amount))
         );
     }
 }

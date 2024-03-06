@@ -84,7 +84,7 @@ public class FactionRankCreateCommand implements RankSubcommand {
 
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} has created a new rank named {}!", Factions.getPrefix(), player.displayName(), Component.text(rankName))
+            MessageUtil.format("{} {} has created a new rank named {}!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(rankName))
         );
     }
 }

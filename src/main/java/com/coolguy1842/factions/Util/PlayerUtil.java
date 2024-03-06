@@ -11,6 +11,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -40,10 +41,48 @@ public class PlayerUtil {
         Optional<FactionPlayer> factionPlayerOptional = Factions.getFactionsCommon().playerManager.getPlayer(playerID);
 
         if(factionPlayerOptional.isPresent()) return factionPlayerOptional.get();
-        assertThat(Factions.getPlugin().getServer().getPlayer(playerID)).isNotNull().withFailMessage("Player with UUID %s not found!", playerID);
+        assertThat(Factions.getPlugin().getServer().getOfflinePlayer(playerID)).isNotNull().withFailMessage("Player with UUID %s not found!", playerID);
 
         return createFactionPlayer(playerID);
     }
+
+
+    public static Boolean playerHasPermission(Player player, Permission permission) {
+        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
+        Optional<Faction> factionOptional = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction());
+
+        if(permission.equals(PlayerPermissions.notInFaction)) return !factionOptional.isPresent();
+        if(permission.equals(PlayerPermissions.inFaction) && !factionOptional.isPresent()) return false;
+        
+        Boolean isLeader = factionOptional.isPresent() ? factionOptional.get().getLeader().equals(factionPlayer.getID()) : false;
+
+        if(permission.equals(PlayerPermissions.leader) && !isLeader) return false;
+        if(permission.equals(PlayerPermissions.notLeader) && isLeader) return false;
+
+
+        Optional<Rank> rankOptional = Factions.getFactionsCommon().rankManager.getRank(factionPlayer.getRank());
+        for(RankPermission rankPermission : RankPermission.values()) {
+            Permission perm = PlayerPermissions.rankPermission(rankPermission);
+            Permission notPerm = PlayerPermissions.notRankPermission(rankPermission);
+
+            if(permission.equals(perm)) {
+                if(isLeader) return true;
+                
+                if(!rankOptional.isPresent()) return false;
+                if(rankOptional.isPresent() && rankOptional.get().hasPermission(rankPermission)) return true;
+            }
+            
+            if(permission.equals(notPerm)) {
+                if(isLeader) return false;
+                
+                if(!rankOptional.isPresent()) return true;
+                if(rankOptional.isPresent() && rankOptional.get().hasPermission(rankPermission)) return false;
+            }
+        }
+
+        return true;
+    } 
+
 
 
     public static final class PlayerPermissions {
@@ -62,48 +101,24 @@ public class PlayerUtil {
     }
 
     public static void updatePlayerPermissions(Player player) {
-        FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
-        Optional<Faction> factionOptional = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction());
-
         if(!perms.containsKey(player.getUniqueId())) perms.put(player.getUniqueId(), player.addAttachment(Factions.getPlugin()));
         PermissionAttachment attachment = perms.get(player.getUniqueId());
 
-        attachment.setPermission(PlayerPermissions.notInFaction.permissionString(), factionPlayer.getFaction() == null);
-        attachment.setPermission(PlayerPermissions.inFaction.permissionString(), factionPlayer.getFaction() != null);
-
-        if(factionOptional.isPresent()) {
-            attachment.setPermission(PlayerPermissions.leader.permissionString(), factionOptional.get().getLeader().equals(player.getUniqueId()));
-            attachment.setPermission(PlayerPermissions.notLeader.permissionString(), !factionOptional.get().getLeader().equals(player.getUniqueId()));
-        }
-        else {
-            attachment.setPermission(PlayerPermissions.leader.permissionString(), false);
-            attachment.setPermission(PlayerPermissions.notLeader.permissionString(), true);
-        }
+        attachment.setPermission(PlayerPermissions.notInFaction.permissionString(), playerHasPermission(player, PlayerPermissions.notInFaction));
+        attachment.setPermission(PlayerPermissions.inFaction.permissionString(), playerHasPermission(player, PlayerPermissions.inFaction));
+        
+        attachment.setPermission(PlayerPermissions.notLeader.permissionString(), playerHasPermission(player, PlayerPermissions.notLeader));
+        attachment.setPermission(PlayerPermissions.leader.permissionString(), playerHasPermission(player, PlayerPermissions.leader));
 
 
-        Optional<Rank> rankOptional = Factions.getFactionsCommon().rankManager.getRank(factionPlayer.getRank());
         for(RankPermission rankPermission : RankPermission.values()) {
-            if(factionOptional.isPresent()) {
-                if(factionOptional.get().getLeader().equals(player.getUniqueId())) {
-                    attachment.setPermission(PlayerPermissions.rankPermission(rankPermission).permissionString(), true);
-                    attachment.setPermission(PlayerPermissions.notRankPermission(rankPermission).permissionString(), false);
-                    
-                    continue;
-                }
-            }
+            Permission perm = PlayerPermissions.rankPermission(rankPermission);
+            Permission notPerm = PlayerPermissions.notRankPermission(rankPermission);
 
-            if(!factionOptional.isPresent() || !rankOptional.isPresent()) {
-                attachment.setPermission(PlayerPermissions.rankPermission(rankPermission).permissionString(), false);
-                attachment.setPermission(PlayerPermissions.notRankPermission(rankPermission).permissionString(), true);
-                
-                continue;
-            }
-
-            Boolean hasPermission = rankOptional.get().hasPermission(rankPermission.name()) || rankOptional.get().hasPermission(RankPermission.ADMIN.name());
-            attachment.setPermission(PlayerPermissions.rankPermission(rankPermission).permissionString(), hasPermission);
-            attachment.setPermission(PlayerPermissions.notRankPermission(rankPermission).permissionString(), !hasPermission);
+            Boolean hasPerm = playerHasPermission(player, perm);
+            attachment.setPermission(notPerm.permissionString(), !hasPerm);
+            attachment.setPermission(perm.permissionString(), hasPerm);
         }
-
 
         player.updateCommands();
     }
@@ -133,7 +148,7 @@ public class PlayerUtil {
 
         FactionUtil.broadcast(
             player.getServer(), inviterFaction,
-            MessageUtil.format("{} {} has joined the faction!", Factions.getPrefix(), Component.text(player.getName()))
+            MessageUtil.format("{} {} has joined the faction!", FactionUtil.getFactionNameAsPrefix(Factions.getFactionsCommon().factionManager.getFaction(inviterFaction).get()), Component.text(player.getName()))
         );
     }
     
@@ -148,7 +163,7 @@ public class PlayerUtil {
 
         FactionUtil.broadcast(
             player.getServer(), inviterFaction,
-            MessageUtil.format("{} {} rejected the invite to the faction!", Factions.getPrefix(), Component.text(player.getName()))
+            MessageUtil.format("{} {} rejected the invite to the faction!", FactionUtil.getFactionNameAsPrefix(Factions.getFactionsCommon().factionManager.getFaction(inviterFaction).get()), Component.text(player.getName()))
         );
 
         player.sendMessage(MessageUtil.format("{} You have rejected the invite to {}!", Factions.getPrefix(), Component.text(factionOptional.get().getName())));
@@ -226,12 +241,12 @@ public class PlayerUtil {
     }
 
 
-    public static Component playerGlobalName(Player player) {
+    public static Component playerGlobalName(OfflinePlayer player) {
         FactionPlayer factionPlayer = getFactionPlayer(player.getUniqueId());
         
         Optional<Faction> faction = Factions.getFactionsCommon().factionManager.getFaction(factionPlayer.getFaction());
         if(faction.isPresent()) {
-            return MessageUtil.format("[{}] {}", FactionUtil.getFactionDisplayName(faction.get()), Component.text(player.getName()));   
+            return MessageUtil.format("{} {}", FactionUtil.getFactionNameAsPrefix(faction.get()), Component.text(player.getName()));   
         }
 
         return Component.text(player.getName());

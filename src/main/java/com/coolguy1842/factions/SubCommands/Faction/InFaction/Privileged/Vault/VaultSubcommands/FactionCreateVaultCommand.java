@@ -120,7 +120,7 @@ public class FactionCreateVaultCommand implements VaultSubcommand {
 
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} has created a new vault named {}!", Factions.getPrefix(), player.displayName(), Component.text(vaultName))
+            MessageUtil.format("{} {} has created a new vault named {}!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(vaultName))
         );
     }
 }

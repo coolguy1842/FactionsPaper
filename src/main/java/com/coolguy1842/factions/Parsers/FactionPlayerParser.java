@@ -56,7 +56,7 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>,
         String input = cmdInput.readString();
         OfflinePlayer player = Bukkit.getOfflinePlayer(input);
 
-        if(input == null || input.isEmpty() || player == null || (!_types.contains(ParserType.INCLUDES_OFFLINE) && !player.isOnline())) {
+        if(input == null || input.isEmpty() || player == null || ((!_types.contains(ParserType.INCLUDES_OFFLINE) && !player.isOnline()) || (_types.contains(ParserType.INCLUDES_OFFLINE) && !player.isOnline() && !player.hasPlayedBefore()))) {
             return ArgumentParseResult.failure(new FactionPlayerParseException(ParserCaptions.Keys.FactionPlayer.INVALID, input, ctx));
         }
 
@@ -136,9 +136,7 @@ public class FactionPlayerParser<C> implements ArgumentParser<C, FactionPlayer>,
 
             if(_types.contains(ParserType.IN_FACTION) && !inFaction) continue;
             if(_types.contains(ParserType.IN_SAME_FACTION) && (!inFaction || !factionPlayer.getFaction().equals(senderFactionPlayer.getFaction()))) continue;
-
             if(_types.contains(ParserType.NOT_IN_FACTION) && inFaction) continue;
-            
             
             if(senderFactionPlayer.getFaction() != null) {
                 Boolean hasInvite = Factions.getFactionsCommon().inviteManager.getInvite(senderFactionPlayer.getFaction(), player.getUniqueId()).isPresent();

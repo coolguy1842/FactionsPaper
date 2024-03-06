@@ -105,6 +105,15 @@ public class FactionUtil {
         return Component.text(faction.getName()).color(color);
     }
 
+    public static Component getFactionNameAsPrefix(Faction faction) {
+        
+        return MessageUtil.combine(
+            Component.text("[")       .color(TextColor.color(160, 160, 160)),
+            getFactionDisplayName(faction),
+            Component.text("]")       .color(TextColor.color(160, 160, 160))
+        );
+    }
+
 
     public static void updateFactionsPlayerTabNames(UUID factionID) {
         for(FactionPlayer factionPlayer : Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionID)) {

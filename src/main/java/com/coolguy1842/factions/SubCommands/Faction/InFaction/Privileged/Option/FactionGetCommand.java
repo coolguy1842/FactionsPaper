@@ -1,5 +1,6 @@
-package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Option.OptionSubcommands;
+package com.coolguy1842.factions.SubCommands.Faction.InFaction.Privileged.Option;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.command.CommandSender;
@@ -10,6 +11,7 @@ import org.incendo.cloud.permission.Permission;
 import org.incendo.cloud.processors.requirements.Requirements;
 
 import com.coolguy1842.factions.Factions;
+import com.coolguy1842.factions.Interfaces.Subcommand;
 import com.coolguy1842.factions.Parsers.FactionOptionParser;
 import com.coolguy1842.factions.Requirements.Faction.DefaultFactionRequirement;
 import com.coolguy1842.factions.Requirements.Faction.FactionRequirement;
@@ -22,16 +24,19 @@ import com.coolguy1842.factionscommon.Classes.Faction.Option;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 
-public class FactionOptionGetCommand implements OptionSubcommand {
-    @Override public Permission getPermission() { return null; }
+public class FactionGetCommand implements Subcommand {
+    @Override public String getName() { return "get"; }
+    @Override public String getDescription() { return "Gets the value of the specified option"; }
+    @Override public Permission getPermission() { return Permission.allOf(PlayerUtil.PlayerPermissions.inFaction); }
 
     @Override
-    public Builder<CommandSender> getCommand(Builder<CommandSender> baseCommand) {
-        return 
-            baseCommand.literal("get")
+    public List<Builder<CommandSender>> getCommands(Builder<CommandSender> baseCommand) {
+        return List.of(
+            baseCommand.literal(getName())
                 .required("option", FactionOptionParser.factionOptionParser())
                     .meta(FactionRequirement.REQUIREMENT_KEY, Requirements.of(new DefaultFactionRequirement()))
-                    .handler(ctx -> runCommand(ctx));
+                    .handler(ctx -> runCommand(ctx))
+        );
     }
 
     @Override

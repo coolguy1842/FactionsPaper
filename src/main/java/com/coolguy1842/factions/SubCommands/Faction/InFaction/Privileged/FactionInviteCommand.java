@@ -60,7 +60,7 @@ public class FactionInviteCommand implements Subcommand {
 
         FactionUtil.broadcast(
             ctx.sender().getServer(), factionPlayer.getFaction(),
-            MessageUtil.format("{} {} has invited {} to the faction!", Factions.getPrefix(), player.displayName(), invitedPlayer.displayName())
+            MessageUtil.format("{} {} has invited {} to the faction!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), invitedPlayer.displayName())
         );
 
         invitedPlayer.sendMessage(

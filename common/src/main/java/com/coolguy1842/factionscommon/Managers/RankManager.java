@@ -15,6 +15,7 @@ import it.unimi.dsi.fastutil.Pair;
 
 import com.coolguy1842.factionscommon.FactionsCommon;
 import com.coolguy1842.factionscommon.Classes.Rank;
+import com.coolguy1842.factionscommon.Classes.Rank.RankPermission;
 import com.coolguy1842.factionscommon.Databases.RankDatabase;
 
 public class RankManager {
@@ -115,18 +116,18 @@ public class RankManager {
     }
     
 
-    public void setRankPermission(UUID id, String permission, boolean value) {
+    public void setRankPermission(UUID id, RankPermission permission, boolean value) {
         assertThat(id).isNotNull().withFailMessage("RankManager#setRankPermission failed: id == null");
         assertThat(permission).isNotNull().withFailMessage("RankManager#setRankPermission failed: permission == null");
 
         assertThat(getRank(id)).isPresent().withFailMessage("RankManager#setRankPermissions failed: Rank with UUID: %s does not exist.", id);
         Rank rank = getRank(id).get();
-        Set<String> permissions = rank.getPermissions();
+        Set<RankPermission> permissions = rank.getPermissions();
 
         if(value) permissions.add(permission);
         else permissions.remove(permission);
 
-        setRankPermissions(id, String.join(",", permissions));
+        setRankPermissions(id, String.join(",", permissions.stream().map(x -> x.name()).toList()));
     }
 
     // WILL NOT CHECK IF PERMISSIONS STRING IS VALID

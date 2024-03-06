@@ -71,7 +71,7 @@ public class FactionRemoveVaultCommand implements VaultSubcommand {
 
         FactionUtil.broadcast(
             player.getServer(), vault.getFaction(),
-            MessageUtil.format("{} {} removed the vault named {}.", Factions.getPrefix(), player.displayName(), Component.text(vault.getName()))
+            MessageUtil.format("{} {} removed the vault named {}.", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(vault.getName()))
         );
     }
 }

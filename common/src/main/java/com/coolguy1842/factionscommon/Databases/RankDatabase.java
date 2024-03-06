@@ -5,11 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.sql.rowset.CachedRowSet;
@@ -132,9 +129,7 @@ public class RankDatabase implements DatabaseHandler {
             String name = rows.getString("name");
             String permissionsStr = rows.getString("permissions");
 
-            Set<String> permissions = new HashSet<String>(Arrays.asList(permissionsStr.split(",")));
-
-            return Optional.of(new Rank(id, faction, name, permissions));
+            return Optional.of(new Rank(id, faction, name, permissionsStr));
         } catch (SQLException e) {
             e.printStackTrace();
             

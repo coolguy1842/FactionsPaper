@@ -18,7 +18,7 @@ import com.coolguy1842.factions.Util.MessageUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class FactionsHelpCommand implements Subcommand {
+public class FactionHelpCommand implements Subcommand {
     @Override public String getName() { return "help"; }
     @Override public String getDescription() { return "Shows this screen!"; }
     @Override public Permission getPermission() { return null; }

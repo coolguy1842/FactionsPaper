@@ -9,6 +9,9 @@ public class ParserCaptions {
     public static final class Keys {
         public static final String NOT_PLAYER_KEY = "argument.parse.failure.not.player";
         public static final Caption NOT_PLAYER = Caption.of(NOT_PLAYER_KEY);
+        
+        public static final String NO_FACTION_KEY = "argument.parse.failure.no.faction";
+        public static final Caption NO_FACTION = Caption.of(NO_FACTION_KEY);
 
         public static final class FactionPlayer {
             public static final String INVALID_KEY = "argument.parse.failure.faction.player.invalid";
@@ -37,7 +40,18 @@ public class ParserCaptions {
         }
 
         public static final class Faction {
-            public static final class Option {
+            public static final class Option {    
+                public static final class Value {
+                    public static final String INVALID_KEY = "argument.parse.failure.faction.option.value.invalid";
+                    public static final Caption INVALID = Caption.of(INVALID_KEY);
+                    
+                    public static final String INVALID_COLOUR_KEY = "argument.parse.failure.faction.option.value.invalid.colour";
+                    public static final Caption INVALID_COLOUR = Caption.of(INVALID_COLOUR_KEY);
+                    
+                    public static final String INVALID_RANK_KEY = "argument.parse.failure.faction.option.value.invalid.rank";
+                    public static final Caption INVALID_RANK = Caption.of(INVALID_RANK_KEY);
+                }
+                
                 public static final String INVALID_KEY = "argument.parse.failure.faction.option.invalid";
                 public static final Caption INVALID = Caption.of(INVALID_KEY);
             }
@@ -122,6 +136,7 @@ public class ParserCaptions {
     public static final class Providers {
         public static final Function<CommandSender, String> getProvider(Caption caption) {
             switch(caption.key()) {
+                case ParserCaptions.Keys.NO_FACTION_KEY: return (CommandSender sender) -> { return "You must be in a faction"; };
                 default: return (CommandSender sender) -> { return "Only players can use this"; };
             }
         }
@@ -143,6 +158,16 @@ public class ParserCaptions {
 
         public static final class Faction {
             public static final class Option {
+                public static final class Value {
+                    public static final Function<CommandSender, String> getProvider(Caption caption) {
+                        switch(caption.key()) {
+                            case ParserCaptions.Keys.Faction.Option.Value.INVALID_COLOUR_KEY: return (CommandSender sender) -> { return "Invalid colour: <input>. e.g \"FFAAFF\""; };
+                            case ParserCaptions.Keys.Faction.Option.Value.INVALID_RANK_KEY: return (CommandSender sender) -> { return "Invalid rank: <input>"; };
+                            default: return (CommandSender sender) -> { return "Invalid option value: <input>"; };
+                        }
+                    }
+                }
+
                 public static final Function<CommandSender, String> getProvider(Caption caption) {
                     switch(caption.key()) {
                         default: return (CommandSender sender) -> { return "No faction option named <input>"; };

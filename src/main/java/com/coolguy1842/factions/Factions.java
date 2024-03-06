@@ -100,6 +100,7 @@ public class Factions extends JavaPlugin {
     private void registerCaptions() {        
         commandManager.captionRegistry()
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.NOT_PLAYER, ParserCaptions.Providers.getProvider(ParserCaptions.Keys.NOT_PLAYER)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.NO_FACTION, ParserCaptions.Providers.getProvider(ParserCaptions.Keys.NO_FACTION)))
 
 
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.FactionPlayer.INVALID, ParserCaptions.Providers.FactionPlayer.getProvider(ParserCaptions.Keys.FactionPlayer.INVALID)))
@@ -121,6 +122,11 @@ public class Factions extends JavaPlugin {
 
 
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.Option.INVALID, ParserCaptions.Providers.Faction.Option.getProvider(ParserCaptions.Keys.Faction.Option.INVALID)))
+
+
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.Option.Value.INVALID, ParserCaptions.Providers.Faction.Option.Value.getProvider(ParserCaptions.Keys.Faction.Option.Value.INVALID)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.Option.Value.INVALID_COLOUR, ParserCaptions.Providers.Faction.Option.Value.getProvider(ParserCaptions.Keys.Faction.Option.Value.INVALID_COLOUR)))
+            .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Faction.Option.Value.INVALID_RANK, ParserCaptions.Providers.Faction.Option.Value.getProvider(ParserCaptions.Keys.Faction.Option.Value.INVALID_RANK)))
 
 
             .registerProvider(CaptionProvider.forCaption(ParserCaptions.Keys.Rank.INVALID, ParserCaptions.Providers.Rank.getProvider(ParserCaptions.Keys.Rank.INVALID)))

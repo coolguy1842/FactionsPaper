@@ -48,12 +48,12 @@ public class FactionRankPermissionSetCommand implements RankSubcommand {
         RankPermission permission = ctx.get("permission");
         Boolean value = ctx.get("value");
 
-        Factions.getFactionsCommon().rankManager.setRankPermission(rank.getID(), permission.name(), value);
+        Factions.getFactionsCommon().rankManager.setRankPermission(rank.getID(), permission, value);
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
             MessageUtil.format(
                 "{} {} has set the permission of rank {} to {}!",
-                Factions.getPrefix(), player.displayName(), Component.text(rank.getName()), Component.text(value ? "true" : "false")
+                FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(rank.getName()), Component.text(value ? "true" : "false")
             )
         );
 

@@ -88,7 +88,7 @@ public class FactionUnclaimCommand implements Subcommand {
 
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} has unclaimed a chunk!", Factions.getPrefix(), player.displayName())
+            MessageUtil.format("{} {} unclaimed a chunk!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName())
         );
     }
 }

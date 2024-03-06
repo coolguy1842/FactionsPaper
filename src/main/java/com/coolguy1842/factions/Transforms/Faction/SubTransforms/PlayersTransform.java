@@ -1,8 +1,10 @@
 package com.coolguy1842.factions.Transforms.Faction.SubTransforms;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +19,7 @@ import org.joml.Math;
 import com.coolguy1842.factions.Factions;
 import com.coolguy1842.factions.Transforms.Faction.FactionMenuTransform;
 import com.coolguy1842.factions.Transforms.Faction.FactionMenuTransform.MenuType;
+import com.coolguy1842.factions.Transforms.Faction.SubTransforms.PlayerTransform.SelectedPlayerType;
 import com.coolguy1842.factions.Util.ItemUtil;
 import com.coolguy1842.factions.Util.PlayerUtil;
 import com.coolguy1842.factionscommon.Classes.FactionPlayer;
@@ -39,8 +42,29 @@ public class PlayersTransform {
         Player player = view.viewer().player();
         FactionPlayer factionPlayer = PlayerUtil.getFactionPlayer(player.getUniqueId());
 
-        List<FactionPlayer> players = Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionPlayer.getFaction());
-        if(pageOffset >= players.size()) {
+
+        SelectedPlayerType selectedPlayerType = view.arguments().getOrDefault(PlayerTransform.selectedPlayerTypeArgumentKey, SelectedPlayerType.IN_FACTION);
+
+        List<FactionPlayer> players;
+
+        // List<FactionPlayer> players = Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionPlayer.getFaction());
+
+        switch(selectedPlayerType) {
+        case IN_FACTION: players = Factions.getFactionsCommon().playerManager.getPlayersWithFaction(factionPlayer.getFaction()); break;
+        case NOT_IN_FACTION:
+            players = new ArrayList<>();
+
+            for(Player p : Bukkit.getOnlinePlayers()) {
+                FactionPlayer fP = PlayerUtil.getFactionPlayer(p.getUniqueId());
+                if(fP.getFaction() != null) continue;
+                
+                players.add(fP);
+            }
+            break;
+        default: players = new ArrayList<>(); break;
+        }
+
+        if(pageOffset >= players.size() && players.size() > 0) {
             HashMapInterfaceArguments args = (HashMapInterfaceArguments)view.arguments();
             args.set(playerPageArgumentKey, 0);
 
@@ -96,6 +120,41 @@ public class PlayersTransform {
                 ),
                 5, pane.rows() - 1
             );
+        }
+
+
+        switch(view.arguments().getOrDefault(PlayerTransform.selectedPlayerTypeArgumentKey, PlayerTransform.SelectedPlayerType.IN_FACTION)) {
+        case IN_FACTION:
+            pane = pane.element(
+                ItemStackElement.of(
+                    ItemUtil.createItem(Material.GREEN_WOOL, 1, Component.text("Showing Players in your Faction")),
+                    (clickHandler) -> {
+                        HashMapInterfaceArguments args = (HashMapInterfaceArguments)view.arguments();
+                        args.set(PlayerTransform.selectedPlayerTypeArgumentKey, PlayerTransform.SelectedPlayerType.NOT_IN_FACTION);
+
+                        view.backing().open(view.viewer(), args);
+                    }
+                ),
+                8, pane.rows() - 1
+            );
+
+            break;
+        case NOT_IN_FACTION:
+            pane = pane.element(
+                ItemStackElement.of(
+                    ItemUtil.createItem(Material.RED_WOOL, 1, Component.text("Showing Players not in your Faction")),
+                    (clickHandler) -> {
+                        HashMapInterfaceArguments args = (HashMapInterfaceArguments)view.arguments();
+                        args.set(PlayerTransform.selectedPlayerTypeArgumentKey, PlayerTransform.SelectedPlayerType.IN_FACTION);
+
+                        view.backing().open(view.viewer(), args);
+                    }
+                ),
+                8, pane.rows() - 1
+            );
+
+            break;
+        default: break;
         }
 
         pane = FactionMenuTransform.addQuitButton(pane, view, MenuType.MENU);

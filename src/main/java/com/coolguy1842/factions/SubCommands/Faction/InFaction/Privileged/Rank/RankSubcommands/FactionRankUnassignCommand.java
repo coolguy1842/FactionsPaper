@@ -44,7 +44,7 @@ public class FactionRankUnassignCommand implements RankSubcommand {
 
         FactionUtil.broadcast(
             sender.getServer(), faction.getID(),
-            MessageUtil.format("{} {} removed {}'s rank.", Factions.getPrefix(), sender.displayName(), Component.text(player.getName()))
+            MessageUtil.format("{} {} removed {}'s rank.", FactionUtil.getFactionNameAsPrefix(faction), sender.displayName(), Component.text(player.getName()))
         );
 
         if(player.isOnline()) {

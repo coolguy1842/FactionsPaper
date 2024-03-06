@@ -52,7 +52,7 @@ public class FactionBankWithdrawCommand implements BankSubcommand {
      
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} withdrew ${}!", Factions.getPrefix(), player.displayName(), Component.text(amount))
+            MessageUtil.format("{} {} withdrew ${}!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(amount))
         );
     }
 
@@ -68,7 +68,7 @@ public class FactionBankWithdrawCommand implements BankSubcommand {
      
         FactionUtil.broadcast(
             player.getServer(), faction.getID(),
-            MessageUtil.format("{} {} withdrew ${}!", Factions.getPrefix(), player.displayName(), Component.text(amount))
+            MessageUtil.format("{} {} withdrew ${}!", FactionUtil.getFactionNameAsPrefix(faction), player.displayName(), Component.text(amount))
         );
     }
 }
